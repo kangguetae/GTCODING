@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.board">
+
+	<select id="list" resultType="com.parucnc.test_3.domain.BoardVO">
+		select
+		bno, title, writer, regDate,
+		content
+		from board
+		order by bno desc
+	</select>
+
+	<select id="view" resultType="com.parucnc.test_3.domain.BoardVO"
+		parameterType="int">
+		select
+		title, writer, content, bno, regDate, viewCnt
+		from
+		board
+		where
+		bno = #{bno}
+	</select>
+
+	<insert id="write"
+		parameterType="com.parucnc.test_3.domain.BoardVO">
+		insert into
+		board (title, writer, content)
+		values(#{title}, #{writer}, #{content})
+	</insert>
+
+	<delete id="delete" parameterType="int">
+		delete
+		from board
+		where bno = #{bno}
+	</delete>
+
+	<update id="update"
+		parameterType="com.parucnc.test_3.domain.BoardVO">
+		update board
+		set title=#{title}, content=#{content},
+		writer=#{writer}
+		where bno=#{bno}
+	</update>
+
+	<update id="viewUpdate" parameterType="int">
+		update board
+		set viewCnt =
+		viewCnt + 1
+		where bno = #{bno}
+	</update>
+
+
+	<select id="listPage"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select
+		title, writer, regDate, bno, viewCnt
+		from board order by bno desc
+		limit #{startNum}, 10
+
+	</select>
+
+	<select id="count" resultType="int">
+		select count(bno)
+		from board
+	</select>
+
+	<select id="search"
+		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
+		select
+		title, writer, regDate, bno, viewCnt
+		from board
+		<where>
+			<if test='search == "title"'>
+				title like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "content"'>
+				content like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "titleAndContent"'>
+				title like concat('%',#{contain},'%') or content like
+				concat('%',#{contain},'%')
+			</if>
+		</where>
+		order by bno desc
+		limit #{startNum}, 10
+	</select>
+
+	<select id="searchCount" resultType="int">
+		select
+			count(bno)
+		from board
+		<where>
+			<if test='search == "title"'>
+				title like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "content"'>
+				content like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "titleAndContent"'>
+				title like concat('%',#{contain},'%') or content like
+				concat('%',#{contain},'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>

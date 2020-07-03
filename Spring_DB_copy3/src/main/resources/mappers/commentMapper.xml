@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.comment.mappers.comment">
+
+	<select id="showComment" resultType="com.parucnc.test_3.domain.CommentVO">
+		select
+		comm
+		from comment
+		where bno = #{bno}
+		<!-- order by bno desc -->
+	</select>
+
+	
+	<insert id="insert" parameterType="com.parucnc.test_3.domain.CommentVO">
+		insert into
+		comment (bno, comm)
+		values(#{bno}, #{comm})
+	</insert>
+
+	<select id="commentCount" resultType="int">
+		select count(*)
+		from comment
+		where bno= #{bno}
+		
+	</select>
+
+</mapper>
