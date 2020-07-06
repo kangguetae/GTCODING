@@ -1,6 +1,7 @@
 package com.parucnc.test_3.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -22,5 +23,10 @@ public class CommentDAOImpl implements CommentDAO{
 	
 	public List showComment(CommentVO vo) throws Exception{
 		return sql.selectList(namespace+".showComment", vo);
+	}
+	
+	public List commentCount(CommentVO vo) throws Exception{
+		return sql.selectList(namespace+".commentCount", vo);
+		
 	}
 }

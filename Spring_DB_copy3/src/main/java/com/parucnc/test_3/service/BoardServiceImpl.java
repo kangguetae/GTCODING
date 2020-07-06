@@ -72,4 +72,9 @@ public class BoardServiceImpl implements BoardService {
 		
 		return dao.searchCount(map);
 	}
+	
+	@Override
+	public List merge(Map map) throws Exception{
+		return dao.merge(map);
+	}
 }

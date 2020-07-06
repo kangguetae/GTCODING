@@ -1,6 +1,7 @@
 package com.parucnc.test_3.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -19,5 +20,9 @@ public class CommentServiceImpl {
 	}
 	public List showComment(CommentVO vo) throws Exception{
 		return dao.showComment(vo);
+	}
+	
+	public List commentCount(CommentVO vo) throws Exception{
+		return dao.commentCount(vo);
 	}
 }

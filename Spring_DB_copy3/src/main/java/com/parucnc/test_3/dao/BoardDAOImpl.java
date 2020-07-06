@@ -70,4 +70,9 @@ public class BoardDAOImpl implements BoardDAO {
 	public int searchCount(Map map) throws Exception{
 		return sql.selectOne(namespace+".searchCount", map);
 	}
+	
+	@Override
+	public List merge(Map map) throws Exception{
+		return sql.selectList(namespace+".merge", map);
+	}
 }

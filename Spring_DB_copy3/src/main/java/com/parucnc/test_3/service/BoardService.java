@@ -19,4 +19,7 @@ public interface BoardService {
 	public void viewUpdate(int bno) throws Exception;
 	public List search(Map map) throws Exception;
 	public int searchCount(Map map) throws Exception;
+	
+	
+	public List merge(Map map) throws Exception;
 }

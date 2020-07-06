@@ -19,11 +19,29 @@
 		values(#{bno}, #{comm})
 	</insert>
 
-	<select id="commentCount" resultType="int">
-		select count(*)
-		from comment
-		where bno= #{bno}
-		
+	<select id="commentCount" resultType="com.parucnc.test_3.domain.CommentVO" >
+		SELECT BNO, COUNT(*)
+		FROM COMMENT
+		GROUP BY BNO;
+		<!-- from comment left outer join board on board.bno = comment.bno -->
+		<!-- where comment.bno = 271335 -->
 	</select>
+	
+	<!-- <update>
+		update board
+		set commCnt = 
+		
+		
+		
+		
+	</update> -->
+	
+	<update id="viewUpdate" parameterType="int">
+		update board
+		set viewCnt =
+		viewCnt + 1
+		where bno = #{bno}
+	</update>
+	
 
 </mapper>

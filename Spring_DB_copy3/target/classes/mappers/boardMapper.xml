@@ -54,10 +54,15 @@
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO">
 		select
-		title, writer, regDate, bno, viewCnt
+		title, writer, regDate, bno, viewCnt, commCnt
 		from board order by bno desc
 		limit #{startNum}, 10
 
+	</select>
+	
+	<select id="commCnt" resultType="int">
+		select count(*)
+		from 
 	</select>
 
 	<select id="count" resultType="int">
@@ -103,5 +108,18 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="merge" resultType="com.parucnc.test_3.domain.BoardVO" parameterType="hashMap">
+		select board.bno, board.title, board.content, board.writer, board.regDate, board.viewCnt, comm.c
+		from board, (select count(*) as c, bno from comment group by bno) comm
+		where #{board.bno} = #{comment.bno}
+	</select>
+	
+	
+	
+	
+	
+	
+	
 
 </mapper>

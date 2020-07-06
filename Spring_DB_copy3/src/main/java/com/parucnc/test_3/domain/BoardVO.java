@@ -8,8 +8,15 @@ public class BoardVO {
 	private String content;
 	private String writer;
 	private String regDate;
+	private int commCnt;
 	
 	
+	public int getCommCnt() {
+		return commCnt;
+	}
+	public void setCommCnt(int commCnt) {
+		this.commCnt = commCnt;
+	}
 	public int getBno() {
 		return bno;
 	}

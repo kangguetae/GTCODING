@@ -39,7 +39,7 @@
 	</c:if>
 	
 	<c:forEach var="page" begin="${startNum}" end="${endNum}">
-		
+		${empty param.search ? 'listPage' : ''}
 		<c:if test="${page ne currentPage}">
 			<a href="/board/search?search=${searchingWay}&contain=${searchWord}&currentPage=${page}">${page}</a>
 		</c:if>

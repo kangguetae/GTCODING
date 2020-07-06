@@ -22,6 +22,7 @@
 			<th>title</th>
 			<th>regDate</th>
 			<th>viewCnt</th>
+			<th>commCnt</th>
 		</tr>
 		<c:forEach var="list" items="${listPage}">
 			<tr>
@@ -30,6 +31,7 @@
 				<td><a href="/board/view/?bno=${list.bno}">${list.title}</a></td>
 				<td>${list.regDate}</td>
 				<td>${list.viewCnt}</td>
+				<td>${list.commCnt}</td>
 			</tr>
 		</c:forEach>
 	</table>

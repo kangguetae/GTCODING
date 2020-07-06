@@ -96,28 +96,31 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/listPage", method = RequestMethod.GET)
-	public String getListPage(@RequestParam(required = false, value = "currentPage", defaultValue="1")int currentPage, Model model) throws Exception{
+	public String getListPage(BoardVO bVO,CommentVO cVO, @RequestParam(required = false, value = "currentPage", defaultValue="1")int currentPage, Model model) throws Exception{
+		Map map = new HashMap();
+		map.put("board", bVO);
+		map.put("comment", cVO);
+		List mergeList = boardService.merge(map);
+//		List commentCount = commService.commentCount(vo);
+//		System.out.println(commentCount);
+		
 		
 		int count = boardService.count();
-		
-		
-		int startNum = currentPage % 10 == 0 ? currentPage - 9 :currentPage - (currentPage % 10) + 1;
-		
-		int lastPage = (int) Math.ceil((double)(count)/10);
-		
+		int startNum = currentPage % 10 == 0 ? currentPage - 9 :currentPage - (currentPage % 10) + 1;		
+		int lastPage = (int) Math.ceil((double)(count)/10);		
 		int endNum = startNum + 9 >= lastPage ? lastPage : startNum + 9;
 
-//		System.out.println(startNum);
-//		System.out.println(lastPage);
-//		System.out.println("-----------");
 		List list = boardService.listPage(currentPage);
+		System.out.println(list.get(0));
+		
+		
+//		model.addAttribute("commentCount", commentCount);
 		model.addAttribute("listPage", list);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("startNum", startNum);
 		model.addAttribute("endNum", endNum);
 		model.addAttribute("lastPage", lastPage);
-		
-		
+
 		
 		return "board/listPage";
 	}
