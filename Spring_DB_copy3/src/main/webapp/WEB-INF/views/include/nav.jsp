@@ -9,7 +9,7 @@
 			<a href="/board/write">작성</a>
 		</li>
 		<li>
-			<a href="/board/listPage">목록(페이징)</a>
+			<a href="/board/listPage?currentPage=1">목록(페이징)</a>
 		</li>
 		<!-- <li>
 			<a href="/board/search">검색</a>

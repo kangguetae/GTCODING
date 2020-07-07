@@ -23,7 +23,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public BoardVO view(int bno) throws Exception {
+	public BoardVO view(long bno) throws Exception {
 		return dao.view(bno);
 	}
 
@@ -54,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public void viewUpdate(int bno) throws Exception{
+	public void viewUpdate(long bno) throws Exception{
 		dao.viewUpdate(bno);
 	}
 	
@@ -76,5 +76,15 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public List merge(Map map) throws Exception{
 		return dao.merge(map);
+	}
+	
+	@Override
+	public List listPage_chat(int startNum) throws Exception{
+		return dao.listPage_chat(startNum);
+	}
+	
+	@Override
+	public int count_chat() throws Exception{
+		return dao.count_chat();
 	}
 }

@@ -17,7 +17,7 @@
 	<div id="nav_genre">
 		<%@ include file="../include/nav_genre.jsp"%>
 	</div>
-	<table>
+	<%-- <table>
 		<tr>		
 			<th>writer</th>
 			<th>title</th>
@@ -67,6 +67,6 @@
 		</select>
 		<input type="text" name="contain" />
 		<input type="submit" value="검색">
-	</form>
+	</form> --%>
 </body>
 </html>

@@ -26,7 +26,7 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 
 	@Override
-	public BoardVO view(int bno) throws Exception {
+	public BoardVO view(long bno) throws Exception {
 		return sql.selectOne(namespace + ".view", bno);
 	}
 
@@ -57,7 +57,7 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 	
 	@Override
-	public void viewUpdate(int bno) throws Exception{
+	public void viewUpdate(long bno) throws Exception{
 		sql.update(namespace+".viewUpdate", bno);
 	}
 	
@@ -74,5 +74,15 @@ public class BoardDAOImpl implements BoardDAO {
 	@Override
 	public List merge(Map map) throws Exception{
 		return sql.selectList(namespace+".merge", map);
+	}
+	
+	@Override
+	public List listPage_chat(int startNum) throws Exception{
+		return sql.selectList(namespace+".listPage_chat" + startNum);
+	}
+	
+	@Override
+	public int count_chat() throws Exception{
+		return sql.selectOne(namespace+".count_chat");
 	}
 }

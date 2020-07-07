@@ -13,7 +13,7 @@
 		<label>title</label> 
 		<input type="text" value="${list.title}" name="title">
 		<label>writer</label> 
-		<input type="text" value="${list.writer}" name="writer"/> <br>
+		<input type="text" value="${list.writer}" name="writer" readOnly/> <br>
 		<label>content</label>
 		<textarea rows="5" cols="50" name="content">${list.content}</textarea>
 		<br> <input type="submit" value="게시물  수정">

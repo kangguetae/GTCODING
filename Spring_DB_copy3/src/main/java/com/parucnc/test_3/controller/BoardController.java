@@ -30,6 +30,12 @@ public class BoardController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@Inject
+	private HomeController homeCon;
+	
+	 
+	
+	
+	@Inject
 	private CommentServiceImpl commService; 
 	@Inject
 	private BoardServiceImpl boardService;
@@ -45,22 +51,42 @@ public class BoardController {
 	
 	@RequestMapping(value="/write", method = RequestMethod.GET)
 	public String getWrite(Model model) throws Exception{
+		model.addAttribute("userID", homeCon.userID);
+		
+		
 		return "board/write";
 	}
 	
 	
 	@RequestMapping(value="/view", method = RequestMethod.GET)
-	public String getView(@RequestParam("bno") int bno, CommentVO commVo, Model model) throws Exception{
-		BoardVO vo = boardService.view(bno);
+	public String getView(@RequestParam("bno") long bno, CommentVO commVo, Model model) throws Exception{
+
+		BoardVO vo; 
+		try {
+			if(bno > Integer.MAX_VALUE) {
+				System.out.println("max보다 큰 long");
+				return "redirect:/board/noSuchPage";
+			}
+			else {
+				System.out.println("아님");
+			}
+			vo = boardService.view(bno);
+			vo.getContent();
+		}
+		catch(Exception e) {
+			return "redirect:/board/noSuchPage";
+		}
+		
+		
 		model.addAttribute("view", vo);
 		boardService.viewUpdate(bno);
+		
 		List comment = commService.showComment(commVo);
-		for(int i = 0; i < comment.size(); i++) {
-			System.out.println(comment.get(i));
-		}
+				
 		model.addAttribute("comment", comment);
 		return "board/view";
 	}
+	
 	@RequestMapping(value="/view", method = RequestMethod.POST)
 	public String postView(@RequestParam("bno")int bno, CommentVO vo, Model model) throws Exception{
 		commService.insert(vo);
@@ -83,6 +109,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/modify", method = RequestMethod.GET)
 	public String getModify(@RequestParam("bno")int bno, Model model) throws Exception{
+		model.addAttribute("userID", homeCon.userID);
 		BoardVO vo =boardService.view(bno);
 		
 		model.addAttribute("list", vo);
@@ -96,27 +123,25 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/listPage", method = RequestMethod.GET)
-	public String getListPage(BoardVO bVO,CommentVO cVO, @RequestParam(required = false, value = "currentPage", defaultValue="1")int currentPage, Model model) throws Exception{
-		Map map = new HashMap();
-		map.put("board", bVO);
-		map.put("comment", cVO);
-		List mergeList = boardService.merge(map);
-//		List commentCount = commService.commentCount(vo);
-//		System.out.println(commentCount);
-		
+	public String getListPage(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
 		
 		int count = boardService.count();
-		int startNum = currentPage % 10 == 0 ? currentPage - 9 :currentPage - (currentPage % 10) + 1;		
-		int lastPage = (int) Math.ceil((double)(count)/10);		
+		int lastPage = (int) Math.ceil((double)(count)/10);
+		if(currentPage > lastPage) {
+			currentPage = lastPage;
+			return "redirect:/board/listPage?currentPage="+lastPage;
+		}
+		int currPage = (int)currentPage;
+		currPage = currPage > lastPage ? lastPage : currPage;
+		int startNum = currPage % 10 == 0 ? currPage - 9 :currPage - (currPage % 10) + 1;		
+			
 		int endNum = startNum + 9 >= lastPage ? lastPage : startNum + 9;
 
-		List list = boardService.listPage(currentPage);
-		System.out.println(list.get(0));
+		List list = boardService.listPage(currPage);
 		
-		
-//		model.addAttribute("commentCount", commentCount);
+
 		model.addAttribute("listPage", list);
-		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("currentPage", currPage);
 		model.addAttribute("startNum", startNum);
 		model.addAttribute("endNum", endNum);
 		model.addAttribute("lastPage", lastPage);
@@ -139,7 +164,7 @@ public class BoardController {
 		int lastPage = (int) Math.ceil((double)(searchCount)/10);		
 		int endNum = startNum + 9 >= lastPage ? lastPage : startNum + 9;
 		
-		List list  = boardService.search(map);
+		List list = boardService.search(map);
 
 		model.addAttribute("listPage", list);
 		model.addAttribute("searchingWay", search);
@@ -151,6 +176,25 @@ public class BoardController {
 		return "board/search";
 	}
 	
+	@RequestMapping(value="/noSuchPage", method=RequestMethod.GET)
+	public String getNoSuchPage(Model model) throws Exception{
+		return "board/noSuchPage";
+	}
+	
+	@RequestMapping(value="/listPage_announcement", method=RequestMethod.GET)
+	public String getListPage_Ann(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
+		return "board/listPage_announcement";
+	}
+	
+	@RequestMapping(value="/listPage_question", method=RequestMethod.GET)
+	public String getListPage_Que(Model model) throws Exception{
+		return "board/listPage_question";
+	}
+	
+	@RequestMapping(value="/listPage_chat", method=RequestMethod.GET)
+	public String getListPage_Chat(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
+		return "board/listPage_chat";
+	}
 //	@RequestMapping(value="/search", method=RequestMethod.GET)
 //	public String getSearch(Model model) throws Exception{
 //		

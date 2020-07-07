@@ -23,7 +23,7 @@ import com.parucnc.test_3.service.UserService;
  */
 @Controller
 public class HomeController {
-
+	public static String userID;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@Inject
 	private UserService service;
@@ -57,6 +57,7 @@ public class HomeController {
 		}
 
 		if (vo.getPw().equals(userVO.getPw())) {
+			this.userID = userVO.getId();
 			return "user/login";
 		}
 

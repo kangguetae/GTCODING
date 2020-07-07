@@ -1,6 +1,6 @@
 package com.parucnc.test_3.domain;
 
-import java.util.Date;
+
 
 public class BoardVO {
 	private int bno;
@@ -9,8 +9,15 @@ public class BoardVO {
 	private String writer;
 	private String regDate;
 	private int commCnt;
+	private String genre;
 	
 	
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
 	public int getCommCnt() {
 		return commCnt;
 	}

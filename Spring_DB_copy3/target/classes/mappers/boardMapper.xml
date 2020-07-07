@@ -13,7 +13,7 @@
 	</select>
 
 	<select id="view" resultType="com.parucnc.test_3.domain.BoardVO"
-		parameterType="int">
+		parameterType="long">
 		select
 		title, writer, content, bno, regDate, viewCnt
 		from
@@ -25,14 +25,15 @@
 	<insert id="write"
 		parameterType="com.parucnc.test_3.domain.BoardVO">
 		insert into
-		board (title, writer, content)
-		values(#{title}, #{writer}, #{content})
-	</insert>
+		board (title, writer, content, genre)
+		values(#{title}, #{writer}, #{content}, #{genre})
+	</insert> 
 
 	<delete id="delete" parameterType="int">
 		delete
 		from board
-		where bno = #{bno}
+		where bno =
+		#{bno}
 	</delete>
 
 	<update id="update"
@@ -43,7 +44,7 @@
 		where bno=#{bno}
 	</update>
 
-	<update id="viewUpdate" parameterType="int">
+	<update id="viewUpdate" parameterType="long">
 		update board
 		set viewCnt =
 		viewCnt + 1
@@ -51,18 +52,28 @@
 	</update>
 
 
+	<!-- 기존 listPage 
+	
+	<select id="listPage" resultType="com.parucnc.test_3.domain.BoardVO"> 
+		select title, writer, regDate, bno, viewCnt, commCnt from board order by 
+		bno desc limit #{startNum}, 10 
+		</select> 
+	-->
+
+	<!-- 댓글 개수 기능 추가 listPage -->
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO">
-		select
-		title, writer, regDate, bno, viewCnt, commCnt
-		from board order by bno desc
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		order by b.bno desc
 		limit #{startNum}, 10
-
 	</select>
-	
+
 	<select id="commCnt" resultType="int">
 		select count(*)
-		from 
+		from
 	</select>
 
 	<select id="count" resultType="int">
@@ -93,7 +104,7 @@
 
 	<select id="searchCount" resultType="int">
 		select
-			count(bno)
+		count(bno)
 		from board
 		<where>
 			<if test='search == "title"'>
@@ -108,18 +119,36 @@
 			</if>
 		</where>
 	</select>
-	
-	<select id="merge" resultType="com.parucnc.test_3.domain.BoardVO" parameterType="hashMap">
-		select board.bno, board.title, board.content, board.writer, board.regDate, board.viewCnt, comm.c
-		from board, (select count(*) as c, bno from comment group by bno) comm
+
+	<select id="merge"
+		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="hashMap">
+		select
+		board.bno, board.title, board.content, board.writer, board.regDate,
+		board.viewCnt, comm.c
+		from board, (select count(*) as c, bno from
+		comment group by bno) comm
 		where #{board.bno} = #{comment.bno}
 	</select>
-	
-	
-	
-	
-	
-	
-	
+
+	<!-- 잡담 장르 list  -->
+	<select id="listPage_chat"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = #{genre}
+		order by b.bno desc
+		<!-- limit #{startNum}, 10 -->
+	</select>
+	<!-- 잡담 장르 갯수 -->
+	<select id="count_chat" resultType="int">
+		select count(bno)
+		from board
+		where genre = #{genre}
+	</select>
+
+
+
 
 </mapper>

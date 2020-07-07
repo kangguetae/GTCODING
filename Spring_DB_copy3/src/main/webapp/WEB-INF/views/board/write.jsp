@@ -17,12 +17,17 @@
 		<input type="text" name="title">
 		
 		<label>writer</label> 
-		<input type="text" name="writer" /> <br>
+		<input type="text" name="writer" value="${userID}" readOnly /> <br>
 		
 		<label>content</label>
 		<textarea rows="5" cols="50" name="content"></textarea>
 		
-		<input type="submit" value="작성">
+		<input type="submit" value="작성"><br>
+		<select name="genre" size="1">
+			<option value="question">질문</option>
+			<option value="announcement" selected>공지</option>
+			<option value="chat">잡담</option>
+		</select>
 	</form>
 	
 </body>
