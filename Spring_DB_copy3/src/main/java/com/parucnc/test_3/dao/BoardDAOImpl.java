@@ -56,6 +56,20 @@ public class BoardDAOImpl implements BoardDAO {
 		return sql.selectOne(namespace+".count");
 	}
 	
+//	@Override
+//	public List listPage(Map map) throws Exception {
+//		
+//		return sql.selectList(namespace + ".listPage", map);
+//	}
+//	
+//	@Override
+//	public int count(String listGenre) throws Exception{
+//		return sql.selectOne(namespace+".count", listGenre);
+//	}
+	
+	
+	
+	
 	@Override
 	public void viewUpdate(long bno) throws Exception{
 		sql.update(namespace+".viewUpdate", bno);
@@ -72,17 +86,32 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 	
 	@Override
-	public List merge(Map map) throws Exception{
-		return sql.selectList(namespace+".merge", map);
-	}
-	
-	@Override
 	public List listPage_chat(int startNum) throws Exception{
-		return sql.selectList(namespace+".listPage_chat" + startNum);
+		return sql.selectList(namespace+".listPage_chat",  startNum);
 	}
 	
 	@Override
 	public int count_chat() throws Exception{
 		return sql.selectOne(namespace+".count_chat");
+	}
+	
+	@Override
+	public List listPage_announcement(int startNum) throws Exception{
+		return sql.selectList(namespace+".listPage_announcement",  startNum);
+	}
+	
+	@Override
+	public int count_announcement() throws Exception{
+		return sql.selectOne(namespace+".count_announcement");
+	}
+	
+	@Override
+	public List listPage_question(int startNum) throws Exception{
+		return sql.selectList(namespace+".listPage_question",  startNum);
+	}
+	
+	@Override
+	public int count_question() throws Exception{
+		return sql.selectOne(namespace+".count_question");
 	}
 }

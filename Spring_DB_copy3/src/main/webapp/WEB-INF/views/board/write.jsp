@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	게시판 작성
+	<h3>게시판 작성</h3>
 	<div id="nav">
 		<%@ include file="../include/nav.jsp"%>
 	</div>

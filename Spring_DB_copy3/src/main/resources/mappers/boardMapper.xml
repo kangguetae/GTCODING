@@ -70,16 +70,60 @@
 		order by b.bno desc
 		limit #{startNum}, 10
 	</select>
+	
+	
+	
+<!-- 	<select id="listPage"
+		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		<where>
+			<if test='genre != ""'>
+				genre = #{listGenre}
+			</if>
+		</where>
+		where genre = #{listGenre}
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select> -->
+
+ 	<select id="count" resultType="int">
+		select count(bno)
+		from board
+	</select>
+
+ 
+ 	<!-- <select id="count" resultType="int" >
+		select count(bno)
+		from board
+		 <where>
+			<if test='listGenre != null'>
+				genre = #{listGenre}
+			</if>
+		</where>
+		where genre = #{listGenre}
+	</select> -->
+ 
+
+
+
+
+
+
+
+
+
+
+
 
 	<select id="commCnt" resultType="int">
 		select count(*)
 		from
 	</select>
 
-	<select id="count" resultType="int">
-		select count(bno)
-		from board
-	</select>
+	
 
 	<select id="search"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
@@ -120,18 +164,49 @@
 		</where>
 	</select>
 
-	<select id="merge"
-		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="hashMap">
-		select
-		board.bno, board.title, board.content, board.writer, board.regDate,
-		board.viewCnt, comm.c
-		from board, (select count(*) as c, bno from
-		comment group by bno) comm
-		where #{board.bno} = #{comment.bno}
+
+
+	<!-- 잡담 장르 list --> 
+	<select id="listPage_chat"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = 'chat'
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	
+	<!-- 잡담 장르 갯수 -->
+	<select id="count_chat" resultType="int">
+		select count(bno)
+		from board
+		where genre = 'chat'
+	</select>
+	
+	<!-- 공지 장르 list  -->
+	<select id="listPage_announcement"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = 'announcement'
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	
+	
+	<!-- 공지 장르 갯수 -->
+	<select id="count_announcement" resultType="int">
+		select count(bno)
+		from board
+		where genre = 'announcement'
 	</select>
 
-	<!-- 잡담 장르 list  -->
-	<select id="listPage_chat"
+	<!-- 질문 장르 list  -->
+	<select id="listPage_question"
 		resultType="com.parucnc.test_3.domain.BoardVO">
 		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
 		from board as b
@@ -139,16 +214,16 @@
 		on b.bno = comm.bno
 		where genre = #{genre}
 		order by b.bno desc
-		<!-- limit #{startNum}, 10 -->
+		limit #{startNum}, 10
 	</select>
+	
+	
 	<!-- 잡담 장르 갯수 -->
-	<select id="count_chat" resultType="int">
+	<select id="count_question" resultType="int">
 		select count(bno)
 		from board
-		where genre = #{genre}
+		where genre = 'question'
 	</select>
-
-
 
 
 </mapper>

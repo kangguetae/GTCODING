@@ -52,6 +52,21 @@ public class BoardServiceImpl implements BoardService {
 	public int count() throws Exception{
 		return dao.count();
 	}
+//	@Override
+//	public List listPage(Map map) throws Exception {
+//		int temp = (int)(map.get("startNum"));
+//		temp = (temp-1)*10;
+//		map.put("startNum", temp);
+//		return dao.listPage(map);
+//	}
+//	
+//	@Override
+//	public int count(String listGenre) throws Exception{
+//		return dao.count(listGenre);
+//	}
+	
+	
+	
 	
 	@Override
 	public void viewUpdate(long bno) throws Exception{
@@ -60,7 +75,6 @@ public class BoardServiceImpl implements BoardService {
 	
 	@Override
 	public List search(Map map) throws Exception{
-		System.out.println("a");
 		return dao.search(map);
 	}
 	
@@ -74,17 +88,35 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public List merge(Map map) throws Exception{
-		return dao.merge(map);
-	}
-	
-	@Override
 	public List listPage_chat(int startNum) throws Exception{
+		startNum = (startNum - 1) * 10;
 		return dao.listPage_chat(startNum);
 	}
 	
 	@Override
 	public int count_chat() throws Exception{
 		return dao.count_chat();
+	}
+	
+	@Override
+	public List listPage_announcement(int startNum) throws Exception{
+		startNum = (startNum - 1) * 10;
+		return dao.listPage_announcement(startNum);
+	}
+	
+	@Override
+	public int count_announcement() throws Exception{
+		return dao.count_announcement();
+	}
+	
+	@Override
+	public List listPage_question(int startNum) throws Exception{
+		startNum = (startNum - 1) * 10;
+		return dao.listPage_question(startNum);
+	}
+	
+	@Override
+	public int count_question() throws Exception{
+		return dao.count_question();
 	}
 }

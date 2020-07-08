@@ -17,7 +17,7 @@
 	<div id="nav_genre">
 		<%@ include file="../include/nav_genre.jsp"%>
 	</div>
-	<%-- <table>
+	<table>
 		<tr>		
 			<th>writer</th>
 			<th>title</th>
@@ -40,13 +40,13 @@
 	</table>
 	
 	<c:if test="${startNum >= 11}">
-	[<a href="/board/listPage?currentPage=${startNum-10}">이전</a>]
+	[<a href="/board/listPage_announcement?currentPage=${startNum-10}">이전</a>]
 	</c:if>
 	
 	<c:forEach var="page" begin="${startNum}" end="${endNum}">
 		
 		<c:if test="${page ne currentPage}">
-			<a href="/board/listPage?currentPage=${page}">${page}</a>
+			<a href="/board/listPage_announcement?currentPage=${page}">${page}</a>
 		</c:if>
 		<c:if test="${page eq currentPage}">
 			<b>${page}</b>
@@ -54,7 +54,7 @@
 		
 	</c:forEach>
 	<c:if test="${startNum+10<=lastPage }">
-	[<a href="/board/listPage?currentPage=${startNum+10}">다음</a>]
+	[<a href="/board/listPage_announcement?currentPage=${startNum+10}">다음</a>]
 	</c:if>
 	<br>
 	
@@ -67,6 +67,6 @@
 		</select>
 		<input type="text" name="contain" />
 		<input type="submit" value="검색">
-	</form> --%>
+	</form> 
 </body>
 </html>

@@ -16,13 +16,22 @@ public interface BoardService {
 	
 	public List listPage(int startNum) throws Exception;
 	public int count() throws Exception;
+//	public List listPage(Map map) throws Exception;
+//	public int count(String listGenre) throws Exception;
+
+	
 	public void viewUpdate(long bno) throws Exception;
 	public List search(Map map) throws Exception;
 	public int searchCount(Map map) throws Exception;
 	
 	
-	public List merge(Map map) throws Exception;
 	
 	public List listPage_chat(int startNum) throws Exception;
 	public int count_chat() throws Exception;
+	
+	public List listPage_announcement(int startNum) throws Exception;
+	public int count_announcement() throws Exception;
+	
+	public List listPage_question(int startNum) throws Exception;
+	public int count_question() throws Exception;
 }

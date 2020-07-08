@@ -12,6 +12,9 @@
 	<div id="nav">
 		<%@ include file="../include/nav.jsp" %>
 	</div>	
-	
+	<br>
+	<div id="nav_genre">
+		<%@ include file="../include/nav_genre.jsp"%>
+	</div>
 </body>
 </html>
