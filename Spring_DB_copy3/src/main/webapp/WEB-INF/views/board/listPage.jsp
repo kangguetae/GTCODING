@@ -29,35 +29,60 @@
 			<tr>
 				<td>${list.writer}</td>
 				<td><a href="/board/view/?bno=${list.bno}">${list.title}
-				<c:if test="${list.commCnt != 0}">
-						(${list.commCnt})
-					</c:if>
-				</a></td>
+						<c:if test="${list.commCnt != 0}">
+							(${list.commCnt})
+						</c:if>
+					</a>
+				</td>
 				<td>${list.regDate}</td>
 				<td>${list.viewCnt}</td>		
 			</tr>
 		</c:forEach>
 	</table>
 	
+	<!-- 글 장르가 정해진경우 -->
+	
+	<c:if test="${genre != null}">
+		<c:if test="${startNum >= 11}">
+		[<a href="/board/listPage?genre=${genre}&currentPage=${startNum-10}">이전</a>]
+		</c:if>
+		
+		<c:forEach var="page" begin="${startNum}" end="${endNum}">
+			
+			<c:if test="${page ne currentPage}">
+				<a href="/board/listPage?genre=${genre}&currentPage=${page}">${page}</a>
+			</c:if>
+			<c:if test="${page eq currentPage}">
+				<b>${page}</b>
+			</c:if>
+			
+		</c:forEach>
+		<c:if test="${startNum+10<=lastPage}">
+		[<a href="/board/listPage?genre=${genre}&currentPage=${startNum+10}">다음</a>]
+		</c:if>
+		<br>
+	</c:if>
+	<!-- 글 장르가 정해지지 않은 경우 -->
+	<c:if test="${genre == null}">
 	<c:if test="${startNum >= 11}">
-	[<a href="/board/listPage?genre=${genre}&currentPage=${startNum-10}">이전</a>]
-	</c:if>
-	
-	<c:forEach var="page" begin="${startNum}" end="${endNum}">
-		
-		<c:if test="${page ne currentPage}">
-			<a href="/board/listPage?genre=${genre}&currentPage=${page}">${page}</a>
-		</c:if>
-		<c:if test="${page eq currentPage}">
-			<b>${page}</b>
+		[<a href="/board/listPage?currentPage=${startNum-10}">이전</a>]
 		</c:if>
 		
-	</c:forEach>
-	<c:if test="${startNum+10<=lastPage }">
-	[<a href="/board/listPage?genre=${genre}&currentPage=${startNum+10}">다음</a>]
+		<c:forEach var="page" begin="${startNum}" end="${endNum}">
+			
+			<c:if test="${page ne currentPage}">
+				<a href="/board/listPage?currentPage=${page}">${page}</a>
+			</c:if>
+			<c:if test="${page eq currentPage}">
+				<b>${page}</b>
+			</c:if>
+			
+		</c:forEach>
+		<c:if test="${startNum+10<=lastPage }">
+		[<a href="/board/listPage?currentPage=${startNum+10}">다음</a>]
+		</c:if>
+		<br>
 	</c:if>
-	<br>
-	
 	
 	<form method="GET" action="/board/search">
 		<select name="search" size="1">

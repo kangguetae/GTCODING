@@ -63,9 +63,6 @@ public class BoardController {
 				System.out.println("max보다 큰 long");
 				return "redirect:/board/noSuchPage";
 			}
-			else {
-				System.out.println("아님");
-			}
 			vo = boardService.view(bno);
 			vo.getContent();
 		}
@@ -124,47 +121,50 @@ public class BoardController {
 	}
 	
 	// 게시물 목록 (페이징) 
-	@RequestMapping(value="/listPage", method = RequestMethod.GET)
-	public String getListPage(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-		int count = boardService.count();
-		int lastPage = (int) Math.ceil((double)(count)/10);
-		if(currentPage > lastPage) {
-			currentPage = lastPage;
-			return "redirect:/board/listPage?currentPage="+lastPage;
-		}
-		int currPage = list(currentPage, lastPage, model);
-		
-		List list = boardService.listPage(currPage);
-		model.addAttribute("listPage", list);
-
-		return "board/listPage";
-	}
-	
-//	@RequestMapping(value="/listPage*", method=RequestMethod.GET)
-//	public String getListPages(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,
-//			@RequestParam(value = "genre")String listGenre, Model model) throws Exception{
-//		System.out.println(listGenre);
-//		int count = boardService.count(listGenre);
-//		System.out.println(count);
+//	@RequestMapping(value="/listPage", method = RequestMethod.GET)
+//	public String getListPage(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
+//		int count = boardService.count();
 //		int lastPage = (int) Math.ceil((double)(count)/10);
 //		if(currentPage > lastPage) {
 //			currentPage = lastPage;
 //			return "redirect:/board/listPage?currentPage="+lastPage;
 //		}
 //		int currPage = list(currentPage, lastPage, model);
-//		Map map = new HashMap();
-//		map.put("listGenre", listGenre);
-//		map.put("startNum", currPage);
 //		
-//		
-//		List list = boardService.listPage(map);
+//		List list = boardService.listPage(currPage);
 //		model.addAttribute("listPage", list);
-//		
-//		model.addAttribute("genre", listGenre);
-//		
+//
 //		return "board/listPage";
-//		
 //	}
+	
+	@RequestMapping(value="/listPage*", method=RequestMethod.GET)
+	public String getListPages(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,
+			@RequestParam(required = false,value = "genre")String listGenre, Model model) throws Exception{
+		System.out.println(listGenre);
+		Map map = new HashMap();
+		map.put("listGenre", listGenre);
+		int count = boardService.count(map);
+		System.out.println(count);
+		int lastPage = (int) Math.ceil((double)(count)/10);
+		if(currentPage > lastPage) {
+			currentPage = lastPage;
+			return "redirect:/board/listPage?currentPage="+lastPage;
+		}
+		System.out.println("currentage= "+currentPage+" lastPage= "+lastPage);
+		int currPage = list(currentPage, lastPage, model);
+		
+		map.put("startNum", currPage);
+		
+		
+		List list = boardService.listPage(map);
+		System.out.println(list.size());
+		model.addAttribute("listPage", list);
+		
+		model.addAttribute("genre", listGenre);
+		
+		return "board/listPage";
+		
+	}
 	
 	
 	
@@ -194,54 +194,54 @@ public class BoardController {
 		return "board/noSuchPage";
 	}
 	
-	@RequestMapping(value="/listPage_question", method=RequestMethod.GET)
-	public String getListPage_Question(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-		int count = boardService.count_question();
-		int lastPage = (int) Math.ceil((double)(count)/10);
-		if(currentPage > lastPage) {
-			currentPage = lastPage;
-			return "redirect:/board/listPage_question?currentPage="+lastPage;
-		}
-		int currPage = list(currentPage, lastPage, model);
-		
-		List list = boardService.listPage_question(currPage);
-		model.addAttribute("listPage", list);
-		return "board/listPage_question";
-	}
-	
-	@RequestMapping(value="/listPage_chat", method=RequestMethod.GET)
-	public String getListPage_Chat(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-		int count = boardService.count_chat();
-		int lastPage = (int) Math.ceil((double)(count)/10);
-		if(currentPage > lastPage) {
-			currentPage = lastPage;
-			return "redirect:/board/listPage_chat?currentPage="+lastPage;
-		}
-		
-		int currPage = list(currentPage, lastPage, model);
-		
-		List list = boardService.listPage_chat(currPage);
-		model.addAttribute("listPage", list);
-
-		
-		
-		return "board/listPage_chat";
-	}
-
-	@RequestMapping(value="/listPage_announcement", method=RequestMethod.GET)
-	public String getListPage_Announcement(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,Model model) throws Exception{
-		int count = boardService.count_announcement();
-		int lastPage = (int) Math.ceil((double)(count)/10);
-		if(currentPage > lastPage) {
-			currentPage = lastPage;
-			return "redirect:/board/listPage_announcement?currentPage="+lastPage;
-		}
-		int currPage = list(currentPage, lastPage, model);
-		
-		List list = boardService.listPage_announcement(currPage);
-		model.addAttribute("listPage", list);
-		return "board/listPage_announcement";
-	}
+//	@RequestMapping(value="/listPage_question", method=RequestMethod.GET)
+//	public String getListPage_Question(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
+//		int count = boardService.count_question();
+//		int lastPage = (int) Math.ceil((double)(count)/10);
+//		if(currentPage > lastPage) {
+//			currentPage = lastPage;
+//			return "redirect:/board/listPage_question?currentPage="+lastPage;
+//		}
+//		int currPage = list(currentPage, lastPage, model);
+//		
+//		List list = boardService.listPage_question(currPage);
+//		model.addAttribute("listPage", list);
+//		return "board/listPage_question";
+//	}
+//	
+//	@RequestMapping(value="/listPage_chat", method=RequestMethod.GET)
+//	public String getListPage_Chat(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
+//		int count = boardService.count_chat();
+//		int lastPage = (int) Math.ceil((double)(count)/10);
+//		if(currentPage > lastPage) {
+//			currentPage = lastPage;
+//			return "redirect:/board/listPage_chat?currentPage="+lastPage;
+//		}
+//		
+//		int currPage = list(currentPage, lastPage, model);
+//		
+//		List list = boardService.listPage_chat(currPage);
+//		model.addAttribute("listPage", list);
+//
+//		
+//		
+//		return "board/listPage_chat";
+//	}
+//
+//	@RequestMapping(value="/listPage_announcement", method=RequestMethod.GET)
+//	public String getListPage_Announcement(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,Model model) throws Exception{
+//		int count = boardService.count_announcement();
+//		int lastPage = (int) Math.ceil((double)(count)/10);
+//		if(currentPage > lastPage) {
+//			currentPage = lastPage;
+//			return "redirect:/board/listPage_announcement?currentPage="+lastPage;
+//		}
+//		int currPage = list(currentPage, lastPage, model);
+//		
+//		List list = boardService.listPage_announcement(currPage);
+//		model.addAttribute("listPage", list);
+//		return "board/listPage_announcement";
+//	}
 	
 	//모든 리스트 페이징 간소화용도
 	public int list(long currentPage, int lastPage, Model model) {
@@ -256,6 +256,7 @@ public class BoardController {
 		model.addAttribute("startNum", startPage);
 		model.addAttribute("endNum", endPage);
 		model.addAttribute("lastPage", lastPage);
+		System.out.println("시작: "+startPage+" 끝: "+endPage);
 		return currPage;
 	}
 	

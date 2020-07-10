@@ -14,10 +14,10 @@ public interface BoardService {
 	public void delete(int bno) throws Exception;
 	public void update(BoardVO vo) throws Exception;
 	
-	public List listPage(int startNum) throws Exception;
-	public int count() throws Exception;
-//	public List listPage(Map map) throws Exception;
-//	public int count(String listGenre) throws Exception;
+//	public List listPage(int startNum) throws Exception;
+//	public int count() throws Exception;
+	public List listPage(Map map) throws Exception;
+	public int count(Map map) throws Exception;
 
 	
 	public void viewUpdate(long bno) throws Exception;

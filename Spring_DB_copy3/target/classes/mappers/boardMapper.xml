@@ -60,7 +60,7 @@
 		</select> 
 	-->
 
-	<!-- 댓글 개수 기능 추가 listPage -->
+	<!-- 댓글 개수 기능 추가 listPage 
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO">
 		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
@@ -70,41 +70,42 @@
 		order by b.bno desc
 		limit #{startNum}, 10
 	</select>
+	-->
 	
 	
-	
-<!-- 	<select id="listPage"
+<!-- -->	
+	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
 		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
 		from board as b
 		left join (select count(*) as c, bno from comment group by bno) as comm
 		on b.bno = comm.bno
-		<where>
-			<if test='genre != ""'>
+		<if test='listGenre != null'>
+			<where>
 				genre = #{listGenre}
-			</if>
-		</where>
-		where genre = #{listGenre}
+			</where>
+		</if>
+		<!-- where genre = #{listGenre} -->
 		order by b.bno desc
 		limit #{startNum}, 10
-	</select> -->
+	</select> 
 
- 	<select id="count" resultType="int">
+ <!--	<select id="count" resultType="int">
 		select count(bno)
 		from board
 	</select>
-
+-->
  
- 	<!-- <select id="count" resultType="int" >
+ 	 <select id="count" resultType="int" parameterType="HashMap">
 		select count(bno)
 		from board
-		 <where>
+		<where>
 			<if test='listGenre != null'>
 				genre = #{listGenre}
 			</if>
 		</where>
-		where genre = #{listGenre}
-	</select> -->
+		<!-- where genre = #{listGenre} -->
+	</select> 
  
 
 

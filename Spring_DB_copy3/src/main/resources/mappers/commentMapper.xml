@@ -6,7 +6,7 @@
 
 	<select id="showComment" resultType="com.parucnc.test_3.domain.CommentVO">
 		select
-		comm
+		comm, cno
 		from comment
 		where bno = #{bno}
 		<!-- order by bno desc -->

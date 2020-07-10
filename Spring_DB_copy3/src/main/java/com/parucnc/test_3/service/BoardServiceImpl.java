@@ -42,28 +42,28 @@ public class BoardServiceImpl implements BoardService {
 		dao.update(vo);
 	}
 
-	@Override
-	public List listPage(int startNum) throws Exception {
-		startNum = (startNum - 1) * 10;
-		return dao.listPage(startNum);
-	}
-	
-	@Override
-	public int count() throws Exception{
-		return dao.count();
-	}
 //	@Override
-//	public List listPage(Map map) throws Exception {
-//		int temp = (int)(map.get("startNum"));
-//		temp = (temp-1)*10;
-//		map.put("startNum", temp);
-//		return dao.listPage(map);
+//	public List listPage(int startNum) throws Exception {
+//		startNum = (startNum - 1) * 10;
+//		return dao.listPage(startNum);
 //	}
 //	
 //	@Override
-//	public int count(String listGenre) throws Exception{
-//		return dao.count(listGenre);
+//	public int count() throws Exception{
+//		return dao.count();
 //	}
+	@Override
+	public List listPage(Map map) throws Exception {
+		int temp = (int)(map.get("startNum"));
+		temp = (temp-1)*10;
+		map.put("startNum", temp);
+		return dao.listPage(map);
+	}
+	
+	@Override
+	public int count(Map map) throws Exception{
+		return dao.count(map);
+	}
 	
 	
 	

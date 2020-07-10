@@ -45,27 +45,27 @@ public class BoardDAOImpl implements BoardDAO {
 		sql.update(namespace + ".update", vo);
 	}
 
-	@Override
-	public List listPage(int startNum) throws Exception {
-		
-		return sql.selectList(namespace + ".listPage", startNum);
-	}
-	
-	@Override
-	public int count() throws Exception{
-		return sql.selectOne(namespace+".count");
-	}
-	
 //	@Override
-//	public List listPage(Map map) throws Exception {
+//	public List listPage(int startNum) throws Exception {
 //		
-//		return sql.selectList(namespace + ".listPage", map);
+//		return sql.selectList(namespace + ".listPage", startNum);
 //	}
 //	
 //	@Override
-//	public int count(String listGenre) throws Exception{
-//		return sql.selectOne(namespace+".count", listGenre);
+//	public int count() throws Exception{
+//		return sql.selectOne(namespace+".count");
 //	}
+	
+	@Override
+	public List listPage(Map map) throws Exception {
+		
+		return sql.selectList(namespace + ".listPage", map);
+	}
+	
+	@Override
+	public int count(Map map) throws Exception{
+		return sql.selectOne(namespace+".count", map);
+	}
 	
 	
 	
