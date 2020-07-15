@@ -3,6 +3,9 @@
 	
 	<ul>
 		<li>
+			<a href="/?logOut=1">로그아웃</a>
+		</li>
+		<li>
 			<a href="/board/list">목록</a>
 		</li>
 		<li>

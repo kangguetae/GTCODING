@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
-
+import com.parucnc.test_3.domain.UserVO;
 import com.parucnc.test_3.service.BoardServiceImpl;
 import com.parucnc.test_3.service.CommentServiceImpl;
 
@@ -46,17 +48,19 @@ public class BoardController {
 	
 	// 게시물 작성 창으로 이동
 	@RequestMapping(value="/write", method = RequestMethod.GET)
-	public String getWrite(Model model) throws Exception{
-		model.addAttribute("userID", homeCon.userID);
+	public String getWrite(Model model, HttpServletRequest request) throws Exception{
+		String id = getId(request);
+		model.addAttribute("userID", id);
 		
 		
 		return "board/write";
-	}
+	} 
 	
 	// 게시물 열람 + 조회수 증가 + 댓글 출력 
 	@RequestMapping(value="/view", method = RequestMethod.GET)
-	public String getView(@RequestParam("bno") long bno, CommentVO commVo, Model model) throws Exception{
-
+	public String getView(HttpServletRequest request, HttpSession session,@RequestParam("bno") long bno, CommentVO commVo, Model model) throws Exception{
+//		logger.info(((UserVO)session.getAttribute("userVO")).getId());
+		String id = getId(request);
 		BoardVO vo; 
 		try {
 			if(bno > Integer.MAX_VALUE) {
@@ -70,7 +74,7 @@ public class BoardController {
 			return "redirect:/board/noSuchPage";
 		}
 		
-		
+		model.addAttribute("id", id);
 		model.addAttribute("view", vo);
 		boardService.viewUpdate(bno);
 		
@@ -86,6 +90,8 @@ public class BoardController {
 		commService.insert(vo);
 		return "redirect:/board/view?bno="+bno;
 	}
+	
+	
 	
 	// 게시물 작성
 	@RequestMapping(value="/write", method=RequestMethod.POST)
@@ -136,28 +142,44 @@ public class BoardController {
 //
 //		return "board/listPage";
 //	}
+	public String getId(HttpServletRequest request) {
+		Cookie [] cookies = request.getCookies();	
+		String id = null;
+		if(cookies != null){
+	        for(Cookie cookie : cookies){
+	            if(cookie.getName().equals("id")){
+	                id = cookie.getValue();
+//	                System.out.println(cookie.getName());
+	                break;
+	            }
+	        }
+	    }
+		return id;
+	}
 	
 	@RequestMapping(value="/listPage*", method=RequestMethod.GET)
 	public String getListPages(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,
-			@RequestParam(required = false,value = "genre")String listGenre, Model model) throws Exception{
-		System.out.println(listGenre);
+			@RequestParam(required = false,value = "genre")String listGenre, Model model, HttpServletRequest request) throws Exception{
+		String id = getId(request);
+		System.out.println("저장된 아이디: "+id);
+//		System.out.println(listGenre);
 		Map map = new HashMap();
 		map.put("listGenre", listGenre);
 		int count = boardService.count(map);
-		System.out.println(count);
+//		System.out.println(count);
 		int lastPage = (int) Math.ceil((double)(count)/10);
 		if(currentPage > lastPage) {
 			currentPage = lastPage;
 			return "redirect:/board/listPage?currentPage="+lastPage;
 		}
-		System.out.println("currentage= "+currentPage+" lastPage= "+lastPage);
+//		System.out.println("currentage= "+currentPage+" lastPage= "+lastPage);
 		int currPage = list(currentPage, lastPage, model);
 		
 		map.put("startNum", currPage);
 		
 		
 		List list = boardService.listPage(map);
-		System.out.println(list.size());
+//		System.out.println(list.size());
 		model.addAttribute("listPage", list);
 		
 		model.addAttribute("genre", listGenre);
