@@ -10,8 +10,23 @@ public class BoardVO {
 	private String regDate;
 	private int commCnt;
 	private String genre;
+	private int likeCnt;
+	private int dislikeCnt;
+	private int viewCnt;
 	
 	
+	public int getLikeCnt() {
+		return likeCnt;
+	}
+	public void setLikeCnt(int likeCnt) {
+		this.likeCnt = likeCnt;
+	}
+	public int getDislikeCnt() {
+		return dislikeCnt;
+	}
+	public void setDislikeCnt(int dislikeCnt) {
+		this.dislikeCnt = dislikeCnt;
+	}
 	public String getGenre() {
 		return genre;
 	}
@@ -60,6 +75,5 @@ public class BoardVO {
 	public void setViewCnt(int viewCnt) {
 		this.viewCnt = viewCnt;
 	}
-	private int viewCnt;
 	
 }

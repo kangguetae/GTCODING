@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user_board.mappers.user_board">
+
+	<select id="list" resultType="com.parucnc.test_3.domain.BoardVO">
+		select
+		bno, title, writer, regDate
+		content
+		from board
+		order by bno desc
+	</select>
+
+	<insert id="u_bMapping" parameterType="hashMap">
+		insert into user_board
+		(uno, bno, isLike)
+		values (#{uno}, #{bno}, #{isLike})
+	</insert>
+	
+	<select id="check_clickedBefore" parameterType="hashMap" resultType="com.parucnc.test_3.domain.User_BoardVO">
+		select *
+		from user_board
+		where uno = #{uno} and bno = #{bno}
+	</select>
+	
+	<delete id="recommDelete" parameterType="hashMap">
+		delete from user_board
+		where bno = #{bno}
+	</delete>
+	
+	<select id="countLike" resultType="Int" parameterType = "hashMap">
+		select count(*)
+		from user_board
+		where bno = #{bno} and isLike = 1
+	</select>
+	<select id="countDislike" resultType="Int" parameterType = "hashMap">
+		select count(*)
+		from user_board
+		where bno = #{bno} and isLike = 0
+	</select>
+	
+
+</mapper>

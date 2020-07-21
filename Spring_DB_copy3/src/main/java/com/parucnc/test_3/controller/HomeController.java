@@ -38,13 +38,36 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(HttpServletRequest request,  HttpServletResponse response, @RequestParam(required=false, value="logOut", defaultValue="0")String logOut,Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		Cookie[] cookies = request.getCookies();
-		if(logOut.equals("1")) {
-			Cookie cookie = new Cookie("id", null);
-			response.addCookie(cookie);
+	public String home(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+			@RequestParam(required = false, value = "logOut", defaultValue = "0") String logOut, Locale locale,
+			Model model) throws Exception{
+		
+		
+//		if (session.getId() != null && !session.getId().equals("")) {
+		try {
+			UserVO userVO = (UserVO)session.getAttribute("userVO");
+			if(userVO != null) {
+				System.out.println(userVO);
+				return "user/login";
+			}
+			
 		}
+		catch(Exception e) {
+			
+		}
+//			System.out.println(userVO.getId());
+//			session.setAttribute("userVO", userVO);
+//			return "user/login";
+//		}
+//			System.out.println(userVO);
+
+		logger.info("Welcome home! The client locale is {}.", locale);
+//		Cookie[] cookies = request.getCookies();
+//		if(logOut.equals("1")) {
+//			Cookie cookie = new Cookie("id", null);
+//			response.addCookie(cookie);
+//		}
+		
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 
@@ -55,23 +78,25 @@ public class HomeController {
 		return "home";
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String postLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, UserVO vo, Model model) throws Exception {
+	/* 로그아웃 */
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String getLogout(HttpSession session, Model model) throws Exception {
+		session.invalidate();
+		return "redirect:/";
+	}
 
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public String postLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, UserVO vo,
+			Model model) throws Exception {
+		
 		UserVO userVO = service.loginCheck(vo);
-		
-			
-		
-		
+
 //		Cookie [] cookie = request.getCookies();
 //		String id = null;
 //		boolean find = false;
-		
-		
+
 		Cookie cookie;
-		
-		
-		
+
 		try {
 			userVO.getId();
 		} catch (Exception e) {
@@ -79,20 +104,20 @@ public class HomeController {
 		}
 
 		if (vo.getPw().equals(userVO.getPw())) {
-			
-			cookie = new Cookie("id", userVO.getId());
-			cookie.setMaxAge(60*20);
-			cookie.setPath("/");
-			response.addCookie(cookie);
-			 
-		    model.addAttribute("cookie",cookie);
-			
-		    logger.info(cookie.getValue());
-		    
-			
-			this.userID = userVO.getId();
+
+//			cookie = new Cookie("id", userVO.getId());
+//			cookie.setMaxAge(60*20);
+//			cookie.setPath("/");
+//			response.addCookie(cookie);
+//			 
+//		    model.addAttribute("cookie",cookie);
+//			
+//		    logger.info(cookie.getValue());
+//		    
+//			
+//			this.userID = userVO.getId();
 			session.setAttribute("userVO", userVO);
-			
+
 			return "user/login";
 		}
 

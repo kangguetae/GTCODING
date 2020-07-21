@@ -27,14 +27,14 @@
 		<!-- where comment.bno = 271335 -->
 	</select>
 	
-	 <update id="">
+	 <!-- <update id="">
 		update board
 		set commCnt = 
 		
 		
 		
 		
-	</update>
+	</update> -->
 	
 	<update id="viewUpdate" parameterType="int">
 		update board

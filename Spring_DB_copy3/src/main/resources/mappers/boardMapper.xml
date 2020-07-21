@@ -6,7 +6,7 @@
 
 	<select id="list" resultType="com.parucnc.test_3.domain.BoardVO">
 		select
-		bno, title, writer, regDate,
+		bno, title, writer, regDate
 		content
 		from board
 		order by bno desc
@@ -15,7 +15,7 @@
 	<select id="view" resultType="com.parucnc.test_3.domain.BoardVO"
 		parameterType="long">
 		select
-		title, writer, content, bno, regDate, viewCnt
+		title, writer, content, bno, regDate, viewCnt, likeCnt, dislikeCnt
 		from
 		board
 		where
@@ -226,5 +226,18 @@
 		where genre = 'question'
 	</select>
 
+	<!-- 추천/비추천 갯수 업데이트  -->
+	<update id="likeOrDislike" parameterType="HashMap">
+		update board
+		set 
+		<if test="lOrDl == 'like'">
+			likeCnt = likeCnt + 1
+		</if>
+		<if test="lOrDl == 'dislike'">
+			dislikeCnt = dislikeCnt + 1
+		</if>
+		where bno = #{bno}
+		
+	</update>
 
 </mapper>

@@ -67,6 +67,10 @@ public class BoardDAOImpl implements BoardDAO {
 		return sql.selectOne(namespace+".count", map);
 	}
 	
+	@Override
+	public void likeOrDislike(Map map) throws Exception{
+		sql.update(namespace+".likeOrDislike", map);
+	}
 	
 	
 	

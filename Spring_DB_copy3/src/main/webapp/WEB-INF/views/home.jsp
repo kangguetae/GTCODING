@@ -38,7 +38,15 @@
 		<a href="/user/signUp">회원가입</a>
 		
 	</p>
-	
+	<ul>
+		<li>
+			<a href="/board/list">목록</a>
+		</li>
+		
+		<li>
+			<a href="/board/listPage?currentPage=1">목록(페이징)</a>
+		</li>
+	</ul>
 
 	
 </body>

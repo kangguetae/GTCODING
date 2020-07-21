@@ -119,4 +119,9 @@ public class BoardServiceImpl implements BoardService {
 	public int count_question() throws Exception{
 		return dao.count_question();
 	}
+	
+	@Override
+	public void likeOrDislike(Map map) throws Exception{
+		dao.likeOrDislike(map);
+	}
 }
