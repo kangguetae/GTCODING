@@ -11,26 +11,62 @@
 <script src="//code.jquery.com/jQuery-3.5.1.min.js"></script>
 
 <script type="text/javascript">
-	/* jQuery(document).ready(function($){
-	 $('body').prepend('<h1>Hello</h1>');
-	 }); */
+	var dislikeBtnData = {
+		"uno" : '${check.uno}',
+		"bno" : '${bno}',
+		"isLike" : "0"
+	};
 
-	/* window.onload = function(){
-	 var ab = document.getElementById('aaa').cloneNode();
+	var likeBtnData = {
+		"uno" : '${check.uno}',
+		"bno" : '${bno}',
+		"isLike" : "1"
+	};
 	
-	 var aaa = document.getElementById('aaa');
-	 aaa.addEventListener('click', function(){
-	 alert('aaa');
-	 });
-	 }
-	 */
+	$(document).ready(function() {
+		$("#like").click(function() {
+			$.ajax({
+				type : "POST",
+				url : "/board/likeOrDislike",
+				data : likeBtnData, //다수의 데이터를 받아와야 한다면 객체를 데이터로 받아온다.
+				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
+
+					var content = ": [" + result + "]";
+					$("#cntLike").text(content);
+					/* "["+1+"]" */
+				},
+				error : function() {
+					alert("이미 참여");
+				}
+			});
+		});
+
+		$("#dislike").click(function() {
+			$.ajax({
+				type : "POST",
+				url : "/board/likeOrDislike",
+				data : dislikeBtnData,
+				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
+
+					var content = ": [" + result + "]";
+					$("#cntDislike").text(content);
+				},
+				error : function() {
+					alert("이미 참여");
+				}
+			});
+		});
+
+	});
+
 	window.onload = function() {
 		var modify = document.getElementsByClassName("modifyBtn");
-		var cancelBtn = document.getElementsByClassName("commentModify_cancelBtn");
+		var cancelBtn = document
+				.getElementsByClassName("commentModify_cancelBtn");
 		var deleteBtn = document.getElementsByClassName("deleteBtn");
-		
+
 		for (var i = 0; i < modify.length; i++) {
-			modify[i].addEventListener("click", function() {			
+			modify[i].addEventListener("click", function() {
 				console.log("수정버튼");
 				$(this).parent().css("display", "none");
 				$(this).parent().next().css("display", "block");
@@ -39,30 +75,27 @@
 			});
 		}
 
-		for(var i = 0; i < cancelBtn.length; i++){
-			cancelBtn[i].addEventListener("click", function(){
+		for (var i = 0; i < cancelBtn.length; i++) {
+			cancelBtn[i].addEventListener("click", function() {
 				console.log("취소버튼");
 				$(this).parent().parent().prev().css("display", "block");
 				$(this).parent().parent().css("display", "none");
 			});
 		}
 
-		for(var i = 0; i < deleteBtn.length; i++){
-			deleteBtn[i].addEventListener("click", function(){
+		for (var i = 0; i < deleteBtn.length; i++) {
+			deleteBtn[i].addEventListener("click", function() {
 				console.log("삭제버튼");
 			});
 		}
 
-		
 	}
 
-		
-	 function login_require(){
-			alert("로그인이 필요한 서비스입니다.");
-		}
+	function login_require() {
+		alert("로그인이 필요한 서비스입니다.");
+	}
 </script>
 <style>
-	
 </style>
 </head>
 <body>
@@ -77,35 +110,41 @@
 	<label> content: </label> ${view.content}
 	<br>
 	<br>
+
+
+
 	<c:if test="${isLogin}">
 		<c:if test="${!alreadyParticipated}">
-		<form method="post" action="/board/likeOrDislike">
-			<input type="hidden" value="${view.bno}" name="bNumber" />
-			<input type="submit" name="likeOrDislike" value="1" />: [${countLike}]
-			<input type="submit" name="likeOrDislike" value="0" />: [${countDislike}]
-		</form>
+			<%-- <form method="post" action="/board/likeOrDislike">
+				<input type="hidden" value="${view.bno}" name="bNumber" />
+				<input type="submit" name="likeOrDislike" value="like" />: [${countLike}]
+				<input type="submit" name="likeOrDislike" value="dislike" />: [${countDislike}]
+			</form> --%>
+			<button id="like">like</button>
+			<div style="display: inline" id="cntLike">: [${countLike}]</div>
+			<button id="dislike">dislike</button>
+			<div style="display: inline" id="cntDislike">:
+				[${countDislike}]</div>
 		</c:if>
 		<c:if test="${alreadyParticipated}">
-			
-			<button onclick="alert('이미 참여하였습니다.')">like</button>: [${countLike}]
-			<button onclick="alert('이미 참여하였습니다.')">dislike</button>: [${countDislike}]
-			<br>
+			<button onclick="alert('이미 참여하였습니다.')">like</button> : [${countLike}]
+			<button onclick="alert('이미 참여하였습니다.')">dislike</button> : [${countDislike}]
 		</c:if>
 	</c:if>
 	<c:if test="${!isLogin}">
-			<button onclick="login_require()">like</button>: [${countLike}]
+		<button onclick="login_require()">like</button>: [${countLike}]
 			<button onclick="login_require()">dislike</button>: [${countDislike}]
 		
 	</c:if>
-	
-	
+
+
 	<c:if test="${userId == view.writer}">
 		<a href="/board/delete/?bno=${view.bno}">게시물 삭제</a>
 		<!-- 페이지 이동X 해당 페이지로의 요청 -->
 		<a href="/board/modify/?bno=${view.bno}">게시물 수정</a>
 		<!-- <button id="aaa">aaa</button> -->
 	</c:if>
-	
+
 	<br>
 	<br>
 	<label>댓글</label>
@@ -116,8 +155,9 @@
 			<div>${commentList.comm}</div>
 			<%-- <c:forEach begin="0" end="25">
 				&nbsp
-			</c:forEach> --%> <!--spring web-session  -->
-			
+			</c:forEach> --%>
+			<!--spring web-session  -->
+
 			<%--
 			<div class="hide" style="display:block;">
 				<button class="modifyBtn">수정</button>
@@ -140,12 +180,14 @@
 
 	<form method="POST">
 		<c:if test="${isLogin}">
-		<textarea rows="2" cols="40" name="comm" placeholder="댓글"></textarea>
-		<input type="hidden" name="bno" value="${view.bno}" /> <input
-			type="submit" value="댓글작성" />
+			<textarea rows="2" cols="40" name="comm" placeholder="댓글"></textarea>
+			<input type="hidden" name="bno" value="${view.bno}" />
+			<input type="submit" value="댓글작성" />
 		</c:if>
 		<c:if test="${!isLogin}">
-		<textarea rows="2" cols="40" name="comm" placeholder="로그인이 필요한 서비스입니다." readOnly></textarea>
+			<textarea rows="2" cols="40" name="comm"
+				placeholder="로그인이 필요한 서비스입니다." readOnly></textarea>
+			<button onclick="alert('로그인이 필요한 서비스입니다.')">댓글작성</button>
 		</c:if>
 	</form>
 </body>

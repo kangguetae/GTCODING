@@ -14,7 +14,9 @@
 		<%@ include file="../include/nav.jsp"%>
 	</div>
 	<br>
-
+	<%-- <div id="nav_genre">
+		<%@ include file="../include/nav_genre.jsp"%>
+	</div> --%>
 	<table>
 		<tr>
 			<th>bno</th>

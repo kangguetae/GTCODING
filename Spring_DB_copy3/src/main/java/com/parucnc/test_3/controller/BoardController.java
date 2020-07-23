@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
@@ -72,108 +73,63 @@ public class BoardController {
 		return "board/write";
 	}
 
-	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
-	public String postLikeOrDislike(HttpSession session, HttpServletResponse response, 
-			HttpServletRequest request, Model model) throws Exception {
-
-		int bno = Integer.parseInt(request.getParameter("bNumber"));
-		int lOrDl = Integer.parseInt(request.getParameter("likeOrDislike"));
-//		Map map = new HashMap();
-//		map.put("lOrDl", lOrDl);
-//		map.put("bno", bno);
-//		boardService.likeOrDislike(map);
-		UserVO userInfo = (UserVO) session.getAttribute("userVO");
-//		System.out.println("uno= "+userVO.getUno());		
-		Map testMap = new HashMap();
-		testMap.put("bno", bno);
-		
-		
-		
-		testMap.put("isLike", lOrDl);
-		testMap.put("uno", userInfo.getUno());
-		User_BoardVO check = u_bService.check_clickedBefore(testMap);
-//		List list = u_bService.check_clickedBefore(testMap);
-//		if(list.size()==0) {
-		
-		
-		if(check == null) {
-			u_bService.u_bMapping(testMap); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
-		}
-		
-//		else { //추|비추버튼을 이미 누름
-//			int which_btn = check.getIsLike(); // 0=dislike 1=like 이전에 누른 버튼이 무슨 버튼인지
-//			if(which_btn == isLike) {
-//				Map mapForDelete = new HashMap();
-//				mapForDelete.put("bno", bno);
-//				mapForDelete.put("uno", userInfo.getUno());
-//				u_bService.recommDelete(mapForDelete);
-//				
-//				
-//				
-//				//u_bmapping 해당 데이터 삭제 
-//				// + islike 0이면 dislikecnt-- 1이면 likecnt--
-//				System.out.println("같은버튼");
-//			}
-//			else {
-//				System.out.println("다른버튼");
-//			}
-//			
-//			System.out.println(which_btn);
-//			
-//			/*
-//			 * 같은버튼 누르면 추천|비추천 취소
-//			 * isLike 확인하고 check안에있는 getIsLike비교해서 같으면 누른버튼cnt--
-//			 * 다르면 그버튼 ++ 다른버튼 --하면 되겠네
-//			 */
-//		}
-		
-//		try {
-//			String cookieNickname = "";
-//			
-//			Cookie[] cookies = request.getCookies();
-//			for (Cookie c : cookies) {
-//				if (c.getName().equals("nickname")) {
-//					cookieNickname = c.getValue();
-//					break;
-//				}
-//			}
-//			
-//			
-//			String sessionNickname = userVO.getNickname();
-//			System.out.println("쿠키: "+cookieNickname);
-//			System.out.println("세션: "+sessionNickname);
-//			
-//			if (!cookieNickname.equals(sessionNickname)) {
-//				System.out.println("if");
-//				Cookie cookie;
-//				cookie = new Cookie("nickname", userVO.getNickname());
-//				cookie.setMaxAge(60*60*24);
-//				cookie.setPath("/board/view?bno="+bno);
-//				System.out.println(cookie.getPath());
-//				response.addCookie(cookie);
-////			 //UI - 
-////		    model.addAttribute("cookie",cookie);
-////			
-////		    logger.info(cookie.getValue());
-////		    
-////			
-////			this.userID = userVO.getId();
+//	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
+//	@ResponseBody
+//	public String postLikeOrDislike(HttpSession session, HttpServletResponse response, 
+//			HttpServletRequest request, Model model) throws Exception {
+//		System.out.println("연결은됨");
+//		int bno = Integer.parseInt(request.getParameter("bNumber"));
+//		int lOrDl = Integer.parseInt(request.getParameter("likeOrDislike"));
+//	Map map = new HashMap();
+//	map.put("lOrDl", lOrDl);
+//	map.put("bno", bno);
+//	boardService.likeOrDislike(map);
+//	UserVO userInfo = (UserVO) session.getAttribute("userVO");
+////	System.out.println("uno= "+userVO.getUno());		
+//	Map testMap = new HashMap();
+//	testMap.put("bno", bno);
+//	
+//	
+//	
+//	testMap.put("isLike", lOrDl);
+//	testMap.put("uno", userInfo.getUno());
+//	User_BoardVO check = u_bService.check_clickedBefore(testMap);
+////	List list = u_bService.check_clickedBefore(testMap);
+////	if(list.size()==0) {
+//	
+//	
+//	if(check == null) {
+//		u_bService.u_bMapping(testMap); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
+//	}
+//	
 //
-////				String lOrDl = request.getParameter("likeOrDislike");
-////				Map map = new HashMap();
-////				map.put("lOrDl", lOrDl);
-////				map.put("bno", bno);
-////				boardService.likeOrDislike(map);
-//			}
-//			else {
-//				System.out.println("이미 참여하였습니다.");
-//			}
-//		} catch (Exception e) {
-//			System.out.println("catch");
-//		}
+//	return "redirect:/board/view?bno=" + bno;
+//}
+	
+	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
+	@ResponseBody
+	public String postLikeOrDislike(HttpServletResponse response,@RequestParam Map<String, String> param) throws Exception {
+		User_BoardVO check = u_bService.check_clickedBefore(param);
+		int count = 0;
 
-//		System.out.println(gb);
-		return "redirect:/board/view?bno=" + bno;
+			if(check == null) {
+				u_bService.u_bMapping(param); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
+			}
+			else {
+				response.setStatus(415);
+					return "";
+			}			
+		int lOrDl = Integer.parseInt(param.get("isLike"));
+			int bno = Integer.parseInt(param.get("bno"));
+			Map cntMap = new HashMap();
+			cntMap.put("bno", bno);
+			if(lOrDl == 1) {
+				count = u_bService.countLike(cntMap);
+			}
+			else {
+				count = u_bService.countDislike(cntMap);
+			}
+		return ""+count;
 	}
 
 	// 게시물 열람 + 조회수 증가 + 댓글 출력
@@ -211,15 +167,28 @@ public class BoardController {
 		
 		Map testMap = new HashMap();
 		testMap.put("bno", bno);
-		testMap.put("uno", userInfo.getUno());
-		User_BoardVO check = u_bService.check_clickedBefore(testMap);
-		if(check != null) {
-			alreadyParticipated = true;
+		try {
+			testMap.put("uno", userInfo.getUno());
+			User_BoardVO check = u_bService.check_clickedBefore(testMap);
+			
+			if(check != null) {
+				alreadyParticipated = true;
+			}
 		}
+		catch(Exception e) {
+			System.out.println("로그인되어있지 않음");
+		}
+		
 		
 		int countDislike = u_bService.countDislike(testMap);
 		int countLike = u_bService.countLike(testMap);
 		System.out.println(countLike+" | "+countDislike);
+		
+		//test
+		model.addAttribute("check", userInfo);
+		model.addAttribute("bno", bno);
+		
+		
 		
 		model.addAttribute("countLike", countLike);
 		model.addAttribute("countDislike", countDislike);

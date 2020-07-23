@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+th,tr, td{
+	text-align:center;
+	border-style:solid;
+}
+]
+
+#selectPage{
+	text-align: center;
+}
+table{
+	text-align: center;
+}
