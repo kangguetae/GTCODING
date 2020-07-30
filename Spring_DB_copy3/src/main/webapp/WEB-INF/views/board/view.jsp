@@ -22,7 +22,6 @@
 		"bno" : '${bno}',
 		"isLike" : "1"
 	};
-	
 	$(document).ready(function() {
 		$("#like").click(function() {
 			$.ajax({
@@ -40,6 +39,7 @@
 				}
 			});
 		});
+
 
 		$("#dislike").click(function() {
 			$.ajax({
@@ -136,8 +136,8 @@
 			<button onclick="login_require()">dislike</button>: [${countDislike}]
 		
 	</c:if>
-
-
+	
+	<br>
 	<c:if test="${userId == view.writer}">
 		<a href="/board/delete/?bno=${view.bno}">게시물 삭제</a>
 		<!-- 페이지 이동X 해당 페이지로의 요청 -->

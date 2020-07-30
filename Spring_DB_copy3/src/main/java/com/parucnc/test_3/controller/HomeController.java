@@ -37,11 +37,13 @@ public class HomeController {
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = {"/", "/loginError"}, method = RequestMethod.GET)
 	public String home(HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			@RequestParam(required = false, value = "logOut", defaultValue = "0") String logOut, Locale locale,
 			Model model) throws Exception{
-		
+		if(request.getRequestURI().equals("/loginError")) {
+			//loginError로 들어왔을 경우
+		}
 		
 //		if (session.getId() != null && !session.getId().equals("")) {
 		try {
@@ -77,7 +79,8 @@ public class HomeController {
 
 		return "home";
 	}
-
+	//기다리라고 하셔서 기다리는 중에 연락드려요. 혹시 어떻게 되셨나요?
+	
 	/* 로그아웃 */
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String getLogout(HttpSession session, Model model) throws Exception {

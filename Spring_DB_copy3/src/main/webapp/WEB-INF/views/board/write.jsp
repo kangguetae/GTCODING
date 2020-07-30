@@ -12,7 +12,7 @@
 		<%@ include file="../include/nav.jsp"%>
 	</div>
 
-	<form method="post">
+	<form method="post" enctype="multipart/form-data">
 		<label>title</label> 
 		<input type="text" name="title">
 		
@@ -21,13 +21,15 @@
 		
 		<label>content</label>
 		<textarea rows="5" cols="50" name="content"></textarea>
-		
-		<input type="submit" value="작성"><br>
+		<br>
+		<input type="file" name="fileUpload" accept="image/*, video/*" multiple/>
+		<br>
 		<select name="genre" size="1">
 			<option value="question">질문</option>
 			<option value="announcement" selected>공지</option>
 			<option value="chat">잡담</option>
 		</select>
+		<input type="submit" value="작성">
 	</form>
 	
 </body>

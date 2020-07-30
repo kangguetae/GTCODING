@@ -1,9 +1,17 @@
 package com.parucnc.test_3.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
@@ -19,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
@@ -32,6 +43,7 @@ import com.parucnc.test_3.service.User_BoardServiceImpl;
 @RequestMapping("/board/*")
 public class BoardController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
+	private static final String PATH = "C:\\fileSave\\";
 
 	@Inject
 	private HomeController homeCon;
@@ -40,7 +52,7 @@ public class BoardController {
 	@Inject
 	private BoardServiceImpl boardService;
 	@Inject
-	private User_BoardServiceImpl u_bService; 
+	private User_BoardServiceImpl u_bService;
 
 	// 댓글 기능 추가 (로그인한사람이름으로) 예제x 시간되면 검색기능 ---- 댓글에도 페이징 (정말 시간 남으면)
 
@@ -68,6 +80,7 @@ public class BoardController {
 			System.out.println("로그인이 필요한 서비스입니다.");
 			return "redirect:/";
 		}
+
 		model.addAttribute("userID", id);
 
 		return "board/write";
@@ -105,50 +118,46 @@ public class BoardController {
 //
 //	return "redirect:/board/view?bno=" + bno;
 //}
-	
+
 	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
 	@ResponseBody
-	public String postLikeOrDislike(HttpServletResponse response,@RequestParam Map<String, String> param) throws Exception {
+	public String postLikeOrDislike(HttpServletResponse response, @RequestParam Map<String, String> param)
+			throws Exception {
 		User_BoardVO check = u_bService.check_clickedBefore(param);
 		int count = 0;
 
-			if(check == null) {
-				u_bService.u_bMapping(param); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
-			}
-			else {
-				response.setStatus(415);
-					return "";
-			}			
+		if (check == null) {
+			u_bService.u_bMapping(param); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
+		} else {
+			response.setStatus(415);
+			return "";
+		}
 		int lOrDl = Integer.parseInt(param.get("isLike"));
-			int bno = Integer.parseInt(param.get("bno"));
-			Map cntMap = new HashMap();
-			cntMap.put("bno", bno);
-			if(lOrDl == 1) {
-				count = u_bService.countLike(cntMap);
-			}
-			else {
-				count = u_bService.countDislike(cntMap);
-			}
-		return ""+count;
+		int bno = Integer.parseInt(param.get("bno"));
+		Map cntMap = new HashMap();
+		cntMap.put("bno", bno);
+		if (lOrDl == 1) {
+			count = u_bService.countLike(cntMap);
+		} else {
+			count = u_bService.countDislike(cntMap);
+		}
+		return "" + count;
 	}
 
 	// 게시물 열람 + 조회수 증가 + 댓글 출력
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public String getView(HttpServletRequest request, HttpSession session, @RequestParam("bno") long bno,
 			CommentVO commVo, Model model) throws Exception {
-//		logger.info(((UserVO)session.getAttribute("userVO")).getId());
 		String id = null;
 		boolean login = false;
 		if ((UserVO) session.getAttribute("userVO") != null) {
 			login = true;
 		}
+
 		model.addAttribute("isLogin", login);
-//		try {
+
 		id = getId(session);
-//		} catch (Exception e) {
-//			System.out.println("로그인이 필요한 서비스입니다.");
-//			return "/";
-//		}
+
 		BoardVO vo;
 		try {
 			if (bno > Integer.MAX_VALUE) {
@@ -161,42 +170,36 @@ public class BoardController {
 			return "redirect:/board/noSuchPage";
 		}
 //		System.out.println(vo.getLikeCnt());
-		
+
 		UserVO userInfo = (UserVO) session.getAttribute("userVO");
 		boolean alreadyParticipated = false;
-		
+
 		Map testMap = new HashMap();
 		testMap.put("bno", bno);
 		try {
 			testMap.put("uno", userInfo.getUno());
 			User_BoardVO check = u_bService.check_clickedBefore(testMap);
-			
-			if(check != null) {
+
+			if (check != null) {
 				alreadyParticipated = true;
 			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println("로그인되어있지 않음");
 		}
-		
-		
+
 		int countDislike = u_bService.countDislike(testMap);
 		int countLike = u_bService.countLike(testMap);
-		System.out.println(countLike+" | "+countDislike);
-		
-		//test
+		// System.out.println(countLike + " | " + countDislike);
+
+		// test
 		model.addAttribute("check", userInfo);
 		model.addAttribute("bno", bno);
-		
-		
-		
 		model.addAttribute("countLike", countLike);
 		model.addAttribute("countDislike", countDislike);
 		model.addAttribute("alreadyParticipated", alreadyParticipated);
-		System.out.println(alreadyParticipated);
 		model.addAttribute("userId", id);
 		model.addAttribute("view", vo);
-		
+
 		boardService.viewUpdate(bno);
 
 		List comment = commService.showComment(commVo);
@@ -214,11 +217,49 @@ public class BoardController {
 
 	// 게시물 작성
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
-	public String postWrite(BoardVO vo, Model model) throws Exception {
-//		System.out.println("5678");
+	public String postWrite(MultipartHttpServletRequest request, BoardVO vo, Model model)
+			throws Exception, IOException {
+		
+		SimpleDateFormat format1 = new SimpleDateFormat ("yyyy-MM-dd");
+		Calendar t = Calendar.getInstance();
+		String currYMD = format1.format(t.getTime());
+		
+		
+		ModelAndView mav = new ModelAndView();
+		UUID randomUUID = UUID.randomUUID();
+		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
+		List<MultipartFile> files = multi.getFiles("fileUpload");
+		
+		String todayPath = PATH+currYMD+"\\";
+		
+		File file = new File(todayPath);
+		if(!file.exists()) {
+			file.mkdirs(); //새로운 폴더 만들기
+		}
+		
+		for(int i=0; i<files.size(); i++) {
+			file=new File(todayPath+randomUUID+files.get(i).getOriginalFilename());
+			files.get(i).transferTo(file); //$$
+		}
+
 		boardService.write(vo);
-//		System.out.println("1234");
+
 		return "redirect:/board/listPage";
+	}
+
+	private String saveFile(MultipartFile file) {
+		UUID uuid = UUID.randomUUID();
+		String saveName = uuid + "_" + file.getOriginalFilename();
+		File saveFile = new File(PATH, saveName);
+		
+		try {
+			file.transferTo(saveFile); // 업로드 파일에 saveFile이라는 껍데기 입힘
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return saveName;
 	}
 
 	// 게시물 삭제
@@ -267,7 +308,7 @@ public class BoardController {
 		try {
 			id = vo.getId();
 		} catch (Exception e) {
-			
+
 		}
 		return id;
 	}
@@ -281,10 +322,9 @@ public class BoardController {
 		try {
 			id = getId(session);
 		} catch (Exception e) {
-			
 
 		}
-		
+
 //		System.out.println(listGenre);
 		Map map = new HashMap();
 		map.put("listGenre", listGenre);

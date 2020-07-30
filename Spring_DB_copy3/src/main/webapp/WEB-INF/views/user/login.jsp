@@ -25,10 +25,10 @@
 </script>
 </head>
 <body>
-	
+	<!-- 
 	<button class="big">button 1</button>
 	<button class="small">button 2</button>
-
+	 -->
 
 
 

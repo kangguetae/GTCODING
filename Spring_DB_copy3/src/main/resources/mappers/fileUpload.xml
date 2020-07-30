@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fileUpload.mappers.fileUpload">
+
+	<select id="list" resultType="com.parucnc.test_3.domain.BoardVO">
+		select
+		bno, title, writer, regDate
+		content
+		from board
+		order by bno desc
+	</select>
+
+	<select id="view" resultType="com.parucnc.test_3.domain.BoardVO"
+		parameterType="long">
+		select
+		title, writer, content, bno, regDate, viewCnt, likeCnt, dislikeCnt
+		from
+		board
+		where
+		bno = #{bno}
+	</select>
+
+	<insert id="write"
+		parameterType="com.parucnc.test_3.domain.BoardVO">
+		insert into
+		board (title, writer, content, genre)
+		values(#{title}, #{writer}, #{content}, #{genre})
+	</insert> 
+
+	<delete id="delete" parameterType="int">
+		delete
+		from board
+		where bno =
+		#{bno}
+	</delete>
+
+	<update id="update"
+		parameterType="com.parucnc.test_3.domain.BoardVO">
+		update board
+		set title=#{title}, content=#{content},
+		writer=#{writer}
+		where bno=#{bno}
+	</update>
+
+	<update id="viewUpdate" parameterType="long">
+		update board
+		set viewCnt =
+		viewCnt + 1
+		where bno = #{bno}
+	</update>
+
+
+	<!-- 기존 listPage 
+	
+	<select id="listPage" resultType="com.parucnc.test_3.domain.BoardVO"> 
+		select title, writer, regDate, bno, viewCnt, commCnt from board order by 
+		bno desc limit #{startNum}, 10 
+		</select> 
+	-->
+
+	<!-- 댓글 개수 기능 추가 listPage 
+	<select id="listPage"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	-->
+	
+	
+<!-- -->	
+	<select id="listPage"
+		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		<if test='listGenre != null'>
+			<where>
+				genre = #{listGenre}
+			</where>
+		</if>
+		<!-- where genre = #{listGenre} -->
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select> 
+
+ <!--	<select id="count" resultType="int">
+		select count(bno)
+		from board
+	</select>
+-->
+ 
+ 	 <select id="count" resultType="int" parameterType="HashMap">
+		select count(bno)
+		from board
+		<where>
+			<if test='listGenre != null'>
+				genre = #{listGenre}
+			</if>
+		</where>
+		<!-- where genre = #{listGenre} -->
+	</select> 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+	<select id="commCnt" resultType="int">
+		select count(*)
+		from
+	</select>
+
+	
+
+	<select id="search"
+		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
+		select
+		title, writer, regDate, bno, viewCnt
+		from board
+		<where>
+			<if test='search == "title"'>
+				title like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "content"'>
+				content like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "titleAndContent"'>
+				title like concat('%',#{contain},'%') or content like
+				concat('%',#{contain},'%')
+			</if>
+		</where>
+		order by bno desc
+		limit #{startNum}, 10
+	</select>
+
+	<select id="searchCount" resultType="int">
+		select
+		count(bno)
+		from board
+		<where>
+			<if test='search == "title"'>
+				title like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "content"'>
+				content like concat('%',#{contain},'%')
+			</if>
+			<if test='search == "titleAndContent"'>
+				title like concat('%',#{contain},'%') or content like
+				concat('%',#{contain},'%')
+			</if>
+		</where>
+	</select>
+
+
+
+	<!-- 잡담 장르 list --> 
+	<select id="listPage_chat"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = 'chat'
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	
+	<!-- 잡담 장르 갯수 -->
+	<select id="count_chat" resultType="int">
+		select count(bno)
+		from board
+		where genre = 'chat'
+	</select>
+	
+	<!-- 공지 장르 list  -->
+	<select id="listPage_announcement"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = 'announcement'
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	
+	
+	<!-- 공지 장르 갯수 -->
+	<select id="count_announcement" resultType="int">
+		select count(bno)
+		from board
+		where genre = 'announcement'
+	</select>
+
+	<!-- 질문 장르 list  -->
+	<select id="listPage_question"
+		resultType="com.parucnc.test_3.domain.BoardVO">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		from board as b
+		left join (select count(*) as c, bno from comment group by bno) as comm
+		on b.bno = comm.bno
+		where genre = #{genre}
+		order by b.bno desc
+		limit #{startNum}, 10
+	</select>
+	
+	
+	<!-- 잡담 장르 갯수 -->
+	<select id="count_question" resultType="int">
+		select count(bno)
+		from board
+		where genre = 'question'
+	</select>
+
+	<!-- 추천/비추천 갯수 업데이트  -->
+	<update id="likeOrDislike" parameterType="HashMap">
+		update board
+		set 
+		<if test="lOrDl == 'like'">
+			likeCnt = likeCnt + 1
+		</if>
+		<if test="lOrDl == 'dislike'">
+			dislikeCnt = dislikeCnt + 1
+		</if>
+		where bno = #{bno}
+		
+	</update>
+
+</mapper>
