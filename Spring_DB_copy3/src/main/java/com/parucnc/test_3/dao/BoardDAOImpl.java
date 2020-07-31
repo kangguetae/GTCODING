@@ -118,4 +118,9 @@ public class BoardDAOImpl implements BoardDAO {
 	public int count_question() throws Exception{
 		return sql.selectOne(namespace+".count_question");
 	}
+	
+	@Override
+	public int mostRecentBno() throws Exception{
+		return sql.selectOne(namespace+".mostRecentBno");
+	}
 }

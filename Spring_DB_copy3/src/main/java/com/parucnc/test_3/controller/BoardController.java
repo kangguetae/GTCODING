@@ -1,12 +1,12 @@
 package com.parucnc.test_3.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,9 +34,11 @@ import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
 import com.parucnc.test_3.domain.UserVO;
 import com.parucnc.test_3.domain.User_BoardVO;
+import com.parucnc.test_3.domain.fileUploadVO;
 import com.parucnc.test_3.service.BoardServiceImpl;
 import com.parucnc.test_3.service.CommentServiceImpl;
 import com.parucnc.test_3.service.User_BoardServiceImpl;
+import com.parucnc.test_3.service.fileUploadServiceImpl;
 
 @Controller
 @RequestMapping("/board/*")
@@ -53,7 +54,8 @@ public class BoardController {
 	private BoardServiceImpl boardService;
 	@Inject
 	private User_BoardServiceImpl u_bService;
-
+	@Inject
+	private fileUploadServiceImpl fileUploadService;
 	// 댓글 기능 추가 (로그인한사람이름으로) 예제x 시간되면 검색기능 ---- 댓글에도 페이징 (정말 시간 남으면)
 
 	// 목록 표시 (그냥 전체 게시글 나열)
@@ -144,6 +146,49 @@ public class BoardController {
 		return "" + count;
 	}
 
+	@RequestMapping(value = "/fileDownload", method = RequestMethod.GET)
+	public void getFileDownload(HttpServletResponse response, @RequestParam("fno")int fno) throws Exception {
+		
+		fileUploadVO fVO = fileUploadService.getFileInfo(fno);
+		
+		String originalName = fVO.getOriginalName();
+		String changedName = fVO.getChangedName();
+		String path = fVO.getPath();
+		System.out.println(changedName);
+		originalName = URLEncoder.encode(originalName, "UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=\""+originalName+"\";");
+		response.setHeader("Content-Transfer-Encoding", "binary");
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Pragma", "no-cache;");
+		response.setHeader("Expires", "-1;");
+		
+		
+		try (
+			FileInputStream fis = new FileInputStream(path);
+			OutputStream os = response.getOutputStream();
+				){
+			
+			int readCount = 0;
+			byte [] buffer = new byte[1024];
+			
+			while((readCount = fis.read(buffer)) != -1) {
+				os.write(buffer, 0, readCount);
+			}
+			os.flush();
+			os.close();
+			fis.close();
+		}
+		catch(Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		
+
+//		return "redirect:/board/view?bno=" + bno;
+		//a태그 download 속성
+	}
+
 	// 게시물 열람 + 조회수 증가 + 댓글 출력
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public String getView(HttpServletRequest request, HttpSession session, @RequestParam("bno") long bno,
@@ -153,7 +198,7 @@ public class BoardController {
 		if ((UserVO) session.getAttribute("userVO") != null) {
 			login = true;
 		}
-
+		
 		model.addAttribute("isLogin", login);
 
 		id = getId(session);
@@ -169,6 +214,54 @@ public class BoardController {
 		} catch (Exception e) {
 			return "redirect:/board/noSuchPage";
 		}
+
+		
+		
+		
+		
+		String createdDate = vo.getRegDate().substring(0, 10);
+		String filePath = PATH + createdDate;
+		System.out.println(createdDate);
+
+		Map map = new HashMap();
+		map.put("bno", bno);
+		List<fileUploadVO> list = new ArrayList<fileUploadVO>();
+		String g = "";
+		list = fileUploadService.fileFind(map);
+		model.addAttribute("fileList", list);
+		
+		
+		
+		File f = new File(filePath);
+		
+		File[] files = f.listFiles();
+		
+		// File [] rFiles = new File[]; c:/dfj
+		System.out.println(g);
+//		for (int i = 0; i < files.length; i++) {
+//			for (fileU ploadVO s : list) {
+//				g = s.getChangedName();
+//				boolean flag = false;
+//				if (!files[i].getName().contains(g)) {
+//					flag = true;
+//				}
+//				if (flag) {
+//					files[i].delete();
+//				}
+//			}
+//
+//		}
+		
+//		System.out.println(files.length);
+		model.addAttribute("files", files);
+
+		
+		
+		
+		
+		
+		
+		
 //		System.out.println(vo.getLikeCnt());
 
 		UserVO userInfo = (UserVO) session.getAttribute("userVO");
@@ -217,33 +310,52 @@ public class BoardController {
 
 	// 게시물 작성
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
-	public String postWrite(MultipartHttpServletRequest request, BoardVO vo, Model model)
+	public String postWrite(fileUploadVO fvo, MultipartHttpServletRequest request, BoardVO vo, Model model, HttpServletRequest req)
 			throws Exception, IOException {
-		
-		SimpleDateFormat format1 = new SimpleDateFormat ("yyyy-MM-dd");
-		Calendar t = Calendar.getInstance();
-		String currYMD = format1.format(t.getTime());
-		
-		
-		ModelAndView mav = new ModelAndView();
-		UUID randomUUID = UUID.randomUUID();
-		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
-		List<MultipartFile> files = multi.getFiles("fileUpload");
-		
-		String todayPath = PATH+currYMD+"\\";
-		
-		File file = new File(todayPath);
-		if(!file.exists()) {
-			file.mkdirs(); //새로운 폴더 만들기
-		}
-		
-		for(int i=0; i<files.size(); i++) {
-			file=new File(todayPath+randomUUID+files.get(i).getOriginalFilename());
-			files.get(i).transferTo(file); //$$
-		}
+		req.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
 
 		boardService.write(vo);
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar t = Calendar.getInstance();
+		String currYMD = format1.format(t.getTime());
 
+		ModelAndView mav = new ModelAndView();
+
+		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
+		List<MultipartFile> files = multi.getFiles("fileUpload");
+
+		if (files.size() != 1 || files.get(0).getSize() != 0) { // 파일 업로드 안했을때는 파일 생성 안하게
+
+			String todayPath = PATH + currYMD + "\\";
+
+			File file = new File(todayPath);
+			if (!file.exists()) {
+				file.mkdirs(); // 새로운 폴더 만들기
+			}
+
+			int bno = boardService.mostRecentBno(); // 가장 최근 작성된 글 bno
+
+			for (int i = 0; i < files.size(); i++) {
+				UUID randomUUID = UUID.randomUUID();
+				String changedName = randomUUID + files.get(i).getOriginalFilename();
+				String originalName = files.get(i).getOriginalFilename();
+				String fileRoot = todayPath + changedName;
+				file = new File(fileRoot);
+				files.get(i).transferTo(file); // $$
+
+				Map map = new HashMap();
+				map.put("bno", bno);
+				map.put("originalName", originalName);
+				map.put("ymd", currYMD);
+				map.put("changedName", changedName);
+				map.put("path", fileRoot);
+				
+				System.out.println(map);
+				fileUploadService.fileSave(map);
+			}
+
+		}
 		return "redirect:/board/listPage";
 	}
 
@@ -251,14 +363,14 @@ public class BoardController {
 		UUID uuid = UUID.randomUUID();
 		String saveName = uuid + "_" + file.getOriginalFilename();
 		File saveFile = new File(PATH, saveName);
-		
+
 		try {
 			file.transferTo(saveFile); // 업로드 파일에 saveFile이라는 껍데기 입힘
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		return saveName;
 	}
 

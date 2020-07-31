@@ -240,4 +240,8 @@
 		
 	</update>
 
+	<select id="mostRecentBno" resultType="int">
+		select bno from board where bno = (select max(bno) from board)
+	</select>
+
 </mapper>

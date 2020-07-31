@@ -36,4 +36,5 @@ public interface BoardService {
 	public int count_question() throws Exception;
 	
 	public void likeOrDislike(Map map) throws Exception;
+	public int mostRecentBno() throws Exception;
 }

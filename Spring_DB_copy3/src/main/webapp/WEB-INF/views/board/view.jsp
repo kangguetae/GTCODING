@@ -46,6 +46,7 @@
 				type : "POST",
 				url : "/board/likeOrDislike",
 				data : dislikeBtnData,
+				contentType:"charset=utf-8",
 				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
 
 					var content = ": [" + result + "]";
@@ -103,23 +104,21 @@
 	<div id="nav">
 		<%@ include file="../include/nav.jsp"%>
 	</div>
-
+	<div id="attachments"><a href="">첨부파일</a></div>
 	<label>title: </label> ${view.title}
 	<label> writer: </label> ${view.writer}
 	<br>
 	<label> content: </label> ${view.content}
 	<br>
 	<br>
-
+	
+	<c:forEach var="file" items="${fileList}">
+		<a href="/board/fileDownload?fno=${file.fno}" download>${file.originalName}</a><br>
+	</c:forEach>
 
 
 	<c:if test="${isLogin}">
 		<c:if test="${!alreadyParticipated}">
-			<%-- <form method="post" action="/board/likeOrDislike">
-				<input type="hidden" value="${view.bno}" name="bNumber" />
-				<input type="submit" name="likeOrDislike" value="like" />: [${countLike}]
-				<input type="submit" name="likeOrDislike" value="dislike" />: [${countDislike}]
-			</form> --%>
 			<button id="like">like</button>
 			<div style="display: inline" id="cntLike">: [${countLike}]</div>
 			<button id="dislike">dislike</button>

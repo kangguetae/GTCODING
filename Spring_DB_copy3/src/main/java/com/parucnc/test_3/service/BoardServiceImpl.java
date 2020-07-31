@@ -124,4 +124,9 @@ public class BoardServiceImpl implements BoardService {
 	public void likeOrDislike(Map map) throws Exception{
 		dao.likeOrDislike(map);
 	}
+	
+	@Override
+	public int mostRecentBno() throws Exception{
+		return dao.mostRecentBno();
+	}
 }
