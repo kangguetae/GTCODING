@@ -5,32 +5,38 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="../resources/css/bootstrap.css">
 </head>
 <body>
+	<div class="container">
 	<h3>게시판 작성</h3>
 	<div id="nav">
 		<%@ include file="../include/nav.jsp"%>
 	</div>
 
 	<form method="post" enctype="multipart/form-data">
+		<div class="form-group">
 		<label>title</label> 
-		<input type="text" name="title">
-		
+		<input class="form-control" type="text" name="title">
+		</div>
+		<div class="form-group">
 		<label>writer</label> 
-		<input type="text" name="writer" value="${userID}" readOnly /> <br>
-		
+		<input class="form-control" type="text" name="writer" value="${userID}" readOnly />
+		</div>
+		<div class="form-group">
 		<label>content</label>
-		<textarea rows="5" cols="50" name="content"></textarea>
-		<br>
+		<textarea class="form-control" rows="5" cols="50" name="content"></textarea>
+		</div>
+		
 		<input type="file" name="fileUpload" accept="image/*, video/*" multiple/>
-		<br>
+		
 		<select name="genre" size="1">
 			<option value="question">질문</option>
 			<option value="announcement" selected>공지</option>
 			<option value="chat">잡담</option>
 		</select>
-		<input type="submit" value="작성">
+		<input class="btn btn-primary" type="submit" value="작성">
 	</form>
-	
+	</div>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <head>
 <meta charset="EUC-KR">
 <title>Insert title here</title>
+<link rel="stylesheet" href="../resources/css/bootstrap.css">
 </head>
 <body>
 	<h3>게시물 수정</h3>

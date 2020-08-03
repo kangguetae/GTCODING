@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="/resources/css/bootstrap.css">
 <style>
 </style>
 <script src="//code.jquery.com/jQuery-3.5.1.min.js"></script>
@@ -40,13 +41,11 @@
 			});
 		});
 
-
 		$("#dislike").click(function() {
 			$.ajax({
 				type : "POST",
 				url : "/board/likeOrDislike",
 				data : dislikeBtnData,
-				contentType:"charset=utf-8",
 				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
 
 					var content = ": [" + result + "]";
@@ -97,97 +96,94 @@
 	}
 </script>
 <style>
+button.like-button, button.dislike-button{
+	background-color: white;
+}
+
 </style>
 </head>
+
 <body>
-	<h1>view</h1>
-	<div id="nav">
-		<%@ include file="../include/nav.jsp"%>
-	</div>
-	<div id="attachments"><a href="">첨부파일</a></div>
-	<label>title: </label> ${view.title}
-	<label> writer: </label> ${view.writer}
-	<br>
-	<label> content: </label> ${view.content}
-	<br>
-	<br>
-	
-	<c:forEach var="file" items="${fileList}">
-		<a href="/board/fileDownload?fno=${file.fno}" download>${file.originalName}</a><br>
-	</c:forEach>
-
-
-	<c:if test="${isLogin}">
-		<c:if test="${!alreadyParticipated}">
-			<button id="like">like</button>
-			<div style="display: inline" id="cntLike">: [${countLike}]</div>
-			<button id="dislike">dislike</button>
-			<div style="display: inline" id="cntDislike">:
-				[${countDislike}]</div>
-		</c:if>
-		<c:if test="${alreadyParticipated}">
-			<button onclick="alert('이미 참여하였습니다.')">like</button> : [${countLike}]
-			<button onclick="alert('이미 참여하였습니다.')">dislike</button> : [${countDislike}]
-		</c:if>
-	</c:if>
-	<c:if test="${!isLogin}">
-		<button onclick="login_require()">like</button>: [${countLike}]
-			<button onclick="login_require()">dislike</button>: [${countDislike}]
-		
-	</c:if>
-	
-	<br>
-	<c:if test="${userId == view.writer}">
-		<a href="/board/delete/?bno=${view.bno}">게시물 삭제</a>
-		<!-- 페이지 이동X 해당 페이지로의 요청 -->
-		<a href="/board/modify/?bno=${view.bno}">게시물 수정</a>
-		<!-- <button id="aaa">aaa</button> -->
-	</c:if>
-
-	<br>
-	<br>
-	<label>댓글</label>
-	<br>
-	<input type="text" style="display: none;">
-	<c:forEach var="commentList" items="${comment}">
-		<div id="${commentList.cno}">
-			<div>${commentList.comm}</div>
-			<%-- <c:forEach begin="0" end="25">
-				&nbsp
-			</c:forEach> --%>
-			<!--spring web-session  -->
-
-			<%--
-			<div class="hide" style="display:block;">
-				<button class="modifyBtn">수정</button>
-				<button class="deleteBtn">삭제</button>
-				<br>
-				<div class="formInput"></div>
-			</div>
-			 <div class="hide" style="display:none;">
-				<form method="POST">
-					<input type="submit" name="commentModify_btn" value="수정"/>
-					<input type="button" class="commentModify_cancelBtn" value="취소"/>
-					<input type="text" name="commentModify" value="${commentList.comm}" />
-					<input type="hidden" name="cno" value="${commentList.cno}" />
-				</form>
-			</div> --%>
+	<div class="container">
+		<h1>view</h1>
+		<div id="nav">
+			<%@ include file="../include/nav.jsp"%>
 		</div>
-		<br>
-	</c:forEach>
+		<!-- <div id="attachments">
+		<a href="">첨부파일</a>
+	</div> -->
+		<div class="form-group">
+			<label>title </label>
+			<div class="form-control">${view.title}</div>
+		</div>
 
+		<div class="form-group">
+			<label> writer </label>
+			<div class="form-control">${view.writer}</div>
+		</div>
 
-	<form method="POST">
+		<div class="form-group">
+			<label> content </label>
+			<textarea class="form-control col-sm-12" rows="5" readOnly>${view.content}</textarea>
+			<br> <label><b>첨부파일</b></label> <br>
+			<c:forEach var="file" items="${fileList}">
+				<a href="/board/fileDownload?fno=${file.fno}" download>${file.originalName}</a>
+				<br>
+			</c:forEach>
+		</div>
+
 		<c:if test="${isLogin}">
-			<textarea rows="2" cols="40" name="comm" placeholder="댓글"></textarea>
-			<input type="hidden" name="bno" value="${view.bno}" />
-			<input type="submit" value="댓글작성" />
+			<c:if test="${!alreadyParticipated}">
+				<button class="like-button" id="like"><!-- <img src="/resources/Image/like.jpg"> -->like</button>
+				<div style="display: inline" id="cntLike">: [${countLike}]</div>
+				<button class="dislike-button" id="dislike">dislike</button>
+				<div style="display: inline" id="cntDislike">:
+					[${countDislike}]</div>
+			</c:if>
+			<c:if test="${alreadyParticipated}">
+				<button class="like-button" onclick="alert('이미 참여하였습니다.')">like</button> : [${countLike}]
+			<button class="dislike-button" onclick="alert('이미 참여하였습니다.')">dislike</button> : [${countDislike}]
+		</c:if>
 		</c:if>
 		<c:if test="${!isLogin}">
-			<textarea rows="2" cols="40" name="comm"
-				placeholder="로그인이 필요한 서비스입니다." readOnly></textarea>
-			<button onclick="alert('로그인이 필요한 서비스입니다.')">댓글작성</button>
+			<button onclick="login_require()">like</button>: [${countLike}]
+			<button onclick="login_require()">dislike</button>: [${countDislike}]
+	</c:if>
+	
+		<c:if test="${userId == view.writer}">
+		<br>
+			<a class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
+				삭제</a>
+			<!-- 페이지 이동X 해당 페이지로의 요청 -->
+			<a class="btn btn-warning" href="/board/modify/?bno=${view.bno}">게시물 수정</a>
+			<!-- <button id="aaa">aaa</button> -->
 		</c:if>
-	</form>
+
+		<br> <br> <label>댓글</label> <br> <input type="text"
+			style="display: none;">
+		<c:forEach var="commentList" items="${comment}">
+			<div class="form-group" id="${commentList.cno}">
+				<div>${commentList.comm}</div>
+			</div>
+			<br>
+		</c:forEach>
+
+
+		<form method="POST">
+			<c:if test="${isLogin}">
+				<div class="form-group">
+					<textarea class="form-control" rows="2" cols="40" name="comm"
+						placeholder="댓글"></textarea>
+					<input type="hidden" name="bno" value="${view.bno}" /> <input
+						class="form-control blue" type="submit" value="댓글작성" />
+				</div>
+			</c:if>
+			<c:if test="${!isLogin}">
+				<textarea rows="2" cols="40" name="comm"
+					placeholder="로그인이 필요한 서비스입니다." readOnly></textarea>
+				<button onclick="alert('로그인이 필요한 서비스입니다.')">댓글작성</button>
+			</c:if>
+		</form>
+	</div>
 </body>
 </html>
