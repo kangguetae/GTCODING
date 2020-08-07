@@ -30,4 +30,14 @@ public class UserDAOImpl implements UserDAO{
 	public void insertUser(UserVO vo) throws Exception{
 		sql.insert(namespace+".insertUser", vo);
 	}
+	
+	@Override
+	public UserVO isAdmin(UserVO vo) throws Exception{
+		return sql.selectOne(namespace+".isAdmin", vo);
+	}
+	
+	@Override
+	public UserVO remID(int uNum) throws Exception{
+		return sql.selectOne(namespace+".remID", uNum);
+	}
 }

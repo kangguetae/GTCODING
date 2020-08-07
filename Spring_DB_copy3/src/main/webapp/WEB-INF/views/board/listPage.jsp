@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="/resources/css/bootstrap.css">
 <body>
 	<div class="container">
-		<h3>리스트 페이징</h3>
+		<h3>list page</h3>
 
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
@@ -30,24 +30,29 @@
 
 
 		<div class="text-center">
-			<table class="table table-striped">
-				<tr>
-					<th>writer</th>
-					<th>title</th>
-					<th>regDate</th>
-					<th>viewCnt</th>
-
+			<table id = "aa" class="table table-striped">
+				<tr class="cc">
+					<th>글쓴이</th>
+					<th>제목</th>
+					<th>날짜</th>
+					<th>조회수</th>
+					<th>추천수</th>
 				</tr>
+				
 				<c:forEach var="list" items="${listPage}">
 					<tr>
 						<td>${list.writer}</td>
-						<td><a href="/board/view/?bno=${list.bno}">${list.title}
+						<td>
+							<a href="/board/view/?bno=${list.bno}">
+								<c:out value="${list.title}" escapeXml="true"/>
 								<c:if test="${list.commCnt != 0}">
-							(${list.commCnt})
-						</c:if>
-						</a></td>
+									(${list.commCnt})
+								</c:if>
+							</a>
+						</td>
 						<td>${list.regDate}</td>
 						<td>${list.viewCnt}</td>
+						<td>${list.recommCnt}</td>
 					</tr>
 				</c:forEach>
 			</table>
@@ -56,37 +61,39 @@
 		<!-- 글 장르가 정해진경우 -->
 
 		<c:if test="${genre != null}">
-			<div class="text-center" id="selectPage">
-				<div class="col-md-offset-3">
-					<ul class="pagination">
-						<c:if test="${startNum >= 11}">
-							<li class="page-item"><a class="page-link"
-								href="/board/listPage?genre=${genre}&currentPage=${startNum-10}">이전</a>
-							</li>
-						</c:if>
-
-						<c:forEach var="page" begin="${startNum}" end="${endNum}">
-
-							<c:if test="${page ne currentPage}">
+			<div class="row justify-content-center">
+				<div class="text-center" id="selectPage">
+					<div class="col-md-offset-3">
+						<ul class="pagination">
+							<c:if test="${startNum >= 11}">
 								<li class="page-item"><a class="page-link"
-									href="/board/listPage?genre=${genre}&currentPage=${page}">${page}</a>
+									href="/board/listPage?genre=${genre}&currentPage=${startNum-10}">이전</a>
 								</li>
 							</c:if>
-							<c:if test="${page eq currentPage}">
-								<li class="page-item"><a class="page-link">${page}</a></li>
+
+							<c:forEach var="page" begin="${startNum}" end="${endNum}">
+
+								<c:if test="${page ne currentPage}">
+									<li class="page-item"><a class="page-link"
+										href="/board/listPage?genre=${genre}&currentPage=${page}">${page}</a>
+									</li>
+								</c:if>
+								<c:if test="${page eq currentPage}">
+									<li class="page-item active"><a class="page-link"><b> ${page}</b></a></li>
+								</c:if>
+
+							</c:forEach>
+
+							<c:if test="${startNum+10<=lastPage}">
+								<li class="page-item"><a class="page-link"
+									href="/board/listPage?genre=${genre}&currentPage=${startNum+10}">다음</a>
+								</li>
 							</c:if>
+						</ul>
+					</div>
 
-						</c:forEach>
-
-						<c:if test="${startNum+10<=lastPage}">
-							<li class="page-item"><a class="page-link"
-								href="/board/listPage?genre=${genre}&currentPage=${startNum+10}">다음</a>
-							</li>
-						</c:if>
-					</ul>
+					<br>
 				</div>
-
-				<br>
 			</div>
 		</c:if>
 
@@ -95,36 +102,38 @@
 		<!-- 글 장르가 정해지지 않은 경우 -->
 
 		<c:if test="${genre == null}">
-			<div class="text-center" id="selectPage">
-				<div class="col-md-offset-3">
-					<ul class="pagination pg-blue">
-						<c:if test="${startNum >= 11}">
-							<li class="page-item"><a class="page-link"
-								href="/board/listPage?currentPage=${startNum-10}">이전</a></li>
-						</c:if>
-
-						<c:forEach var="page" begin="${startNum}" end="${endNum}">
-
-							<c:if test="${page ne currentPage}">
+			<div class="row justify-content-center">
+				<div class="text-center" id="selectPage">
+					<div class="col-md-offset-3">
+						<ul class="pagination pg-blue">
+							<c:if test="${startNum >= 11}">
 								<li class="page-item"><a class="page-link"
-									href="/board/listPage?currentPage=${page}">${page}</a></li>
+									href="/board/listPage?currentPage=${startNum-10}">이전</a></li>
 							</c:if>
-							<c:if test="${page eq currentPage}">
-								<li class="page-item"><a class="page-link">${page}</a></li>
+
+							<c:forEach var="page" begin="${startNum}" end="${endNum}">
+
+								<c:if test="${page ne currentPage}">
+									<li class="page-item"><a class="page-link"
+										href="/board/listPage?currentPage=${page}">${page}</a></li>
+								</c:if>
+								<c:if test="${page eq currentPage}">
+									<li class="page-item"><a class="page-link"><b>${page}</b></a></li>
+								</c:if>
+							</c:forEach>
+							<c:if test="${startNum+10<=lastPage }">
+								<li class="page-item"><a class="page-link"
+									href="/board/listPage?currentPage=${startNum+10}">다음</a></li>
 							</c:if>
-						</c:forEach>
-						<c:if test="${startNum+10<=lastPage }">
-							<li class="page-item"><a class="page-link"
-								href="/board/listPage?currentPage=${startNum+10}">다음</a></li>
-						</c:if>
-					</ul>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</c:if>
 
 
 
-		<div class="search row">
+		<div class="row justify-content-center">
 			<form method="GET" action="/board/search">
 				<div class="input-group">
 					<div class="col-xs-4 col-sm-4">
@@ -143,7 +152,7 @@
 				</div>
 			</form>
 		</div>
-		
+		<br>
 	</div>
 </body>
 </html>

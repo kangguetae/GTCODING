@@ -74,9 +74,17 @@
 	
 	
 <!-- -->	
+<!-- 추천 개수 -->
+	<select id="countRecomm" resultType="list">
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, 
+		(select count(if(isLike = 1, isLike , null)) from user_board where bno = b.bno) 
+		from board as b group by bno
+	</select>
+
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
-		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt
+		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt,
+		 (select count(if(isLike = 1, isLike , null)) from user_board where bno = b.bno) as recommCnt
 		from board as b
 		left join (select count(*) as c, bno from comment group by bno) as comm
 		on b.bno = comm.bno
@@ -107,18 +115,6 @@
 		<!-- where genre = #{listGenre} -->
 	</select> 
  
-
-
-
-
-
-
-
-
-
-
-
-
 	<select id="commCnt" resultType="int">
 		select count(*)
 		from
@@ -244,4 +240,6 @@
 		select bno from board where bno = (select max(bno) from board)
 	</select>
 
+	
+	
 </mapper>

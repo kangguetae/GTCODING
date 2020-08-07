@@ -23,4 +23,13 @@ public class UserServiceImpl implements UserService{
 		dao.insertUser(vo);
 	}
 	
+	@Override
+	public UserVO isAdmin(UserVO vo) throws Exception{
+		return dao.isAdmin(vo);
+	}
+	
+	@Override
+	public UserVO remID(int uNum) throws Exception{
+		return dao.remID(uNum);
+	}
 }

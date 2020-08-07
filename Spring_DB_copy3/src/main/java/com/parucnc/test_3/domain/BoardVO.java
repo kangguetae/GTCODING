@@ -13,8 +13,14 @@ public class BoardVO {
 	private int likeCnt;
 	private int dislikeCnt;
 	private int viewCnt;
+	private int recommCnt;
 	
-	
+	public int getRecommCnt() {
+		return recommCnt;
+	}
+	public void setRecommCnt(int recommCnt) {
+		this.recommCnt = recommCnt;
+	}
 	public int getLikeCnt() {
 		return likeCnt;
 	}

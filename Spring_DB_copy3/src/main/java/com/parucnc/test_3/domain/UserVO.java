@@ -5,7 +5,14 @@ public class UserVO {
 	private String pw;
 	private String nickname;
 	private int uno;
+	private String status;
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public int getUno() {
 		return uno;
 	}

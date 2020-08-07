@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div class="container">
-	<h3>게시판 작성</h3>
+	<h3>write</h3>
 	<div id="nav">
 		<%@ include file="../include/nav.jsp"%>
 	</div>

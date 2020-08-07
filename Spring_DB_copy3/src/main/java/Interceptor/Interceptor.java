@@ -23,17 +23,12 @@ public class Interceptor extends HandlerInterceptorAdapter{
 			HttpServletResponse response, Object handler)
 		throws Exception {
 		HttpSession session = request.getSession();
-//		System.out.println(handler);
 		UserVO userVO = (UserVO)session.getAttribute("userVO");
-		
+
 		try {
 			userVO.getId();
-//			System.out.println("로그인됨");
 		}
 		catch(Exception e) {
-			
-//			System.out.println("안됨 로그인 페이지로");
-//			response.setHeader("error", "true");
 			response.sendRedirect("/loginError");
 		}
 		

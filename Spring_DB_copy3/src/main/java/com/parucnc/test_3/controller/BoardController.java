@@ -14,14 +14,17 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +40,7 @@ import com.parucnc.test_3.domain.User_BoardVO;
 import com.parucnc.test_3.domain.fileUploadVO;
 import com.parucnc.test_3.service.BoardServiceImpl;
 import com.parucnc.test_3.service.CommentServiceImpl;
+import com.parucnc.test_3.service.UserServiceImpl;
 import com.parucnc.test_3.service.User_BoardServiceImpl;
 import com.parucnc.test_3.service.fileUploadServiceImpl;
 
@@ -45,7 +49,7 @@ import com.parucnc.test_3.service.fileUploadServiceImpl;
 public class BoardController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	private static final String PATH = "C:\\fileSave\\";
-
+	
 	@Inject
 	private HomeController homeCon;
 	@Inject
@@ -56,6 +60,9 @@ public class BoardController {
 	private User_BoardServiceImpl u_bService;
 	@Inject
 	private fileUploadServiceImpl fileUploadService;
+	@Inject
+	private UserServiceImpl userService; 
+	
 	// 댓글 기능 추가 (로그인한사람이름으로) 예제x 시간되면 검색기능 ---- 댓글에도 페이징 (정말 시간 남으면)
 
 	// 목록 표시 (그냥 전체 게시글 나열)
@@ -82,44 +89,12 @@ public class BoardController {
 			System.out.println("로그인이 필요한 서비스입니다.");
 			return "redirect:/";
 		}
-
+		boolean isAdmin = isAdmin(session);
+		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("userID", id);
 
 		return "board/write";
 	}
-
-//	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
-//	@ResponseBody
-//	public String postLikeOrDislike(HttpSession session, HttpServletResponse response, 
-//			HttpServletRequest request, Model model) throws Exception {
-//		System.out.println("연결은됨");
-//		int bno = Integer.parseInt(request.getParameter("bNumber"));
-//		int lOrDl = Integer.parseInt(request.getParameter("likeOrDislike"));
-//	Map map = new HashMap();
-//	map.put("lOrDl", lOrDl);
-//	map.put("bno", bno);
-//	boardService.likeOrDislike(map);
-//	UserVO userInfo = (UserVO) session.getAttribute("userVO");
-////	System.out.println("uno= "+userVO.getUno());		
-//	Map testMap = new HashMap();
-//	testMap.put("bno", bno);
-//	
-//	
-//	
-//	testMap.put("isLike", lOrDl);
-//	testMap.put("uno", userInfo.getUno());
-//	User_BoardVO check = u_bService.check_clickedBefore(testMap);
-////	List list = u_bService.check_clickedBefore(testMap);
-////	if(list.size()==0) {
-//	
-//	
-//	if(check == null) {
-//		u_bService.u_bMapping(testMap); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
-//	}
-//	
-//
-//	return "redirect:/board/view?bno=" + bno;
-//}
 
 	@RequestMapping(value = "/likeOrDislike", method = RequestMethod.POST)
 	@ResponseBody
@@ -127,7 +102,6 @@ public class BoardController {
 			throws Exception {
 		User_BoardVO check = u_bService.check_clickedBefore(param);
 		int count = 0;
-
 		if (check == null) {
 			u_bService.u_bMapping(param); // u_b테이블에 버튼누른사람 아이디랑 글번호 추가
 		} else {
@@ -147,58 +121,49 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/fileDownload", method = RequestMethod.GET)
-	public void getFileDownload(HttpServletResponse response, @RequestParam("fno")int fno) throws Exception {
-		
+	public void getFileDownload(HttpServletResponse response, @RequestParam("fno") int fno) throws Exception {
+
 		fileUploadVO fVO = fileUploadService.getFileInfo(fno);
-		
+
 		String originalName = fVO.getOriginalName();
 		String changedName = fVO.getChangedName();
 		String path = fVO.getPath();
 		System.out.println(changedName);
 		originalName = URLEncoder.encode(originalName, "UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=\""+originalName+"\";");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + originalName + "\";");
 		response.setHeader("Content-Transfer-Encoding", "binary");
 		response.setCharacterEncoding("UTF-8");
 		response.setHeader("Pragma", "no-cache;");
 		response.setHeader("Expires", "-1;");
-		
-		
-		try (
-			FileInputStream fis = new FileInputStream(path);
-			OutputStream os = response.getOutputStream();
-				){
-			
+
+		try (FileInputStream fis = new FileInputStream(path); OutputStream os = response.getOutputStream();) {
+
 			int readCount = 0;
-			byte [] buffer = new byte[1024];
-			
-			while((readCount = fis.read(buffer)) != -1) {
+			byte[] buffer = new byte[1024];
+
+			while ((readCount = fis.read(buffer)) != -1) {
 				os.write(buffer, 0, readCount);
 			}
 			os.flush();
 			os.close();
 			fis.close();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-
-		
-
-//		return "redirect:/board/view?bno=" + bno;
-		//a태그 download 속성
 	}
 
 	// 게시물 열람 + 조회수 증가 + 댓글 출력
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public String getView(HttpServletRequest request, HttpSession session, @RequestParam("bno") long bno,
-			CommentVO commVo, Model model) throws Exception {
+	@RequestMapping(value = "/view/*", method = RequestMethod.GET)
+	public String getView(@CookieValue(value = "page", required = false) Cookie pageCookie,
+			HttpServletResponse response, HttpSession session,
+			@RequestParam("bno") long bno, CommentVO commVo, Model model) throws Exception {
 		String id = null;
 		boolean login = false;
 		if ((UserVO) session.getAttribute("userVO") != null) {
 			login = true;
 		}
-		
+
 		model.addAttribute("isLogin", login);
 
 		id = getId(session);
@@ -215,10 +180,6 @@ public class BoardController {
 			return "redirect:/board/noSuchPage";
 		}
 
-		
-		
-		
-		
 		String createdDate = vo.getRegDate().substring(0, 10);
 		String filePath = PATH + createdDate;
 		System.out.println(createdDate);
@@ -228,41 +189,15 @@ public class BoardController {
 		List<fileUploadVO> list = new ArrayList<fileUploadVO>();
 		String g = "";
 		list = fileUploadService.fileFind(map);
-		model.addAttribute("fileList", list);
-		
-		
-		
-		File f = new File(filePath);
-		
-		File[] files = f.listFiles();
-		
-		// File [] rFiles = new File[]; c:/dfj
-		System.out.println(g);
-//		for (int i = 0; i < files.length; i++) {
-//			for (fileU ploadVO s : list) {
-//				g = s.getChangedName();
-//				boolean flag = false;
-//				if (!files[i].getName().contains(g)) {
-//					flag = true;
-//				}
-//				if (flag) {
-//					files[i].delete();
-//				}
-//			}
-//
-//		}
-		
-//		System.out.println(files.length);
-		model.addAttribute("files", files);
 
-		
-		
-		
-		
-		
-		
-		
-//		System.out.println(vo.getLikeCnt());
+		model.addAttribute("fileList", list);
+
+		File f = new File(filePath);
+		File[] files = f.listFiles();
+
+		System.out.println(g);
+
+		model.addAttribute("files", files);
 
 		UserVO userInfo = (UserVO) session.getAttribute("userVO");
 		boolean alreadyParticipated = false;
@@ -282,8 +217,10 @@ public class BoardController {
 
 		int countDislike = u_bService.countDislike(testMap);
 		int countLike = u_bService.countLike(testMap);
-		// System.out.println(countLike + " | " + countDislike);
 
+		
+		boolean isAdmin = isAdmin(session);
+		model.addAttribute("isAdmin", isAdmin);
 		// test
 		model.addAttribute("check", userInfo);
 		model.addAttribute("bno", bno);
@@ -293,30 +230,60 @@ public class BoardController {
 		model.addAttribute("userId", id);
 		model.addAttribute("view", vo);
 
-		boardService.viewUpdate(bno);
+		// 조회수 증가 - 역시 쿠키인가?
+
+		String boardNumber = "[" + bno + "]";
+
+		if (pageCookie == null || !("[" + pageCookie.getValue() + "]").contains(boardNumber)) {
+			if (pageCookie != null) {
+				boardNumber = pageCookie.getValue() + boardNumber;
+			}
+			SimpleDateFormat format2 = new SimpleDateFormat("HH:mm:ss");
+			Calendar t = Calendar.getInstance();
+			String currHMS = format2.format(t.getTime());
+			int hour = Integer.parseInt(currHMS.substring(0, 2));
+			int minute = Integer.parseInt(currHMS.substring(3, 5));
+			int second = Integer.parseInt(currHMS.substring(6));
+			int passedTime = hour * 3600 + minute * 60 + second;
+			
+			Cookie cookie = new Cookie("page", boardNumber);
+			cookie.setMaxAge(60 * 60 * 24 - passedTime); // 자정부터 조회수 다시 올릴수 있게
+			cookie.setPath("/board/view");
+			response.addCookie(cookie);
+			boardService.viewUpdate(bno);
+
+		}
 
 		List comment = commService.showComment(commVo);
-
 		model.addAttribute("comment", comment);
+		
+		
+		
+		
+		
+		
 		return "board/view";
 	}
+	
 
 	// 댓글작성
 	@RequestMapping(value = "/view", method = RequestMethod.POST)
 	public String postView(@RequestParam("bno") int bno, CommentVO vo, Model model) throws Exception {
 		commService.insert(vo);
+		
 		return "redirect:/board/view?bno=" + bno;
 	}
 
 	// 게시물 작성
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
-	public String postWrite(fileUploadVO fvo, MultipartHttpServletRequest request, BoardVO vo, Model model, HttpServletRequest req)
-			throws Exception, IOException {
+	public String postWrite(fileUploadVO fvo, MultipartHttpServletRequest request, BoardVO vo, Model model,
+			HttpServletRequest req) throws Exception, IOException {
 		req.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 
 		boardService.write(vo);
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
 		Calendar t = Calendar.getInstance();
 		String currYMD = format1.format(t.getTime());
 
@@ -350,11 +317,10 @@ public class BoardController {
 				map.put("ymd", currYMD);
 				map.put("changedName", changedName);
 				map.put("path", fileRoot);
-				
+
 				System.out.println(map);
 				fileUploadService.fileSave(map);
 			}
-
 		}
 		return "redirect:/board/listPage";
 	}
@@ -398,68 +364,71 @@ public class BoardController {
 		return "redirect:/board/listPage";
 	}
 
-	// 게시물 목록 (페이징)
-//	@RequestMapping(value="/listPage", method = RequestMethod.GET)
-//	public String getListPage(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-//		int count = boardService.count();
-//		int lastPage = (int) Math.ceil((double)(count)/10);
-//		if(currentPage > lastPage) {
-//			currentPage = lastPage;
-//			return "redirect:/board/listPage?currentPage="+lastPage;
-//		}
-//		int currPage = list(currentPage, lastPage, model);
-//		
-//		List list = boardService.listPage(currPage);
-//		model.addAttribute("listPage", list);
-//
-//		return "board/listPage";
-//	}
 	public String getId(HttpSession session) throws Exception {
 		UserVO vo = (UserVO) session.getAttribute("userVO");
 		String id = null;
 		try {
 			id = vo.getId();
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		return id;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/chooseGenre", method = RequestMethod.POST)
+	public Object postChooseGenre(Model model, @RequestParam Map<String, String> param) throws Exception{
+		String genre = param.get("genre");
+		int currentPage = 1;
+		Map map = new HashMap();
+		map.put("listGenre", genre);
+		int count = boardService.count(map);
+		System.out.println(count);
+		map.put("startNum", currentPage);
 
+		List list = boardService.listPage(map);
+	
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("list", list);
+		return list;
+	}
+	
 	@RequestMapping(value = "/listPage*", method = RequestMethod.GET)
 	public String getListPages(HttpSession session,
 			@RequestParam(required = false, value = "currentPage", defaultValue = "1") long currentPage,
-			@RequestParam(required = false, value = "genre") String listGenre, Model model, HttpServletRequest request)
+			@RequestParam(required = false, value = "genre") String listGenre, Model model, UserVO vo)
 			throws Exception {
-		String id = null;
-		try {
-			id = getId(session);
-		} catch (Exception e) {
-
-		}
-
-//		System.out.println(listGenre);
+	
+		
 		Map map = new HashMap();
 		map.put("listGenre", listGenre);
 		int count = boardService.count(map);
-//		System.out.println(count);
 		int lastPage = (int) Math.ceil((double) (count) / 10);
 		if (currentPage > lastPage) {
 			currentPage = lastPage;
 			return "redirect:/board/listPage?currentPage=" + lastPage;
 		}
-//		System.out.println("currentage= "+currentPage+" lastPage= "+lastPage);
 		int currPage = list(currentPage, lastPage, model);
-
+		System.out.println(currPage);
 		map.put("startNum", currPage);
 
 		List list = boardService.listPage(map);
-//		System.out.println(list.size());
 		model.addAttribute("listPage", list);
 
 		model.addAttribute("genre", listGenre);
-
+		
+		
+		boolean isAdmin = isAdmin(session);
+		model.addAttribute("isAdmin", isAdmin);
+		
+		
 		return "board/listPage";
-
+	}
+	
+	public boolean isAdmin(HttpSession session) {
+		UserVO vo = (UserVO)session.getAttribute("userVO");
+		boolean isAdmin = vo.getStatus().equals("admin") ? true : false;
+		return isAdmin;
 	}
 
 	// 게시물 검색
@@ -468,7 +437,7 @@ public class BoardController {
 			Model model, HttpServletRequest req) throws Exception {
 		Map map = search1(currentPage, req);
 		List list = boardService.search(map);
-		int searchCount = boardService.searchCount(map);
+		int searchCount = boardService.searchCount(map); // 검색한 내용물의 개수
 		search2(searchCount, model, req, currentPage);
 		model.addAttribute("listPage", list);
 		return "board/search";
@@ -479,55 +448,6 @@ public class BoardController {
 	public String getNoSuchPage(Model model) throws Exception {
 		return "board/noSuchPage";
 	}
-
-//	@RequestMapping(value="/listPage_question", method=RequestMethod.GET)
-//	public String getListPage_Question(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-//		int count = boardService.count_question();
-//		int lastPage = (int) Math.ceil((double)(count)/10);
-//		if(currentPage > lastPage) {
-//			currentPage = lastPage;
-//			return "redirect:/board/listPage_question?currentPage="+lastPage;
-//		}
-//		int currPage = list(currentPage, lastPage, model);
-//		
-//		List list = boardService.listPage_question(currPage);
-//		model.addAttribute("listPage", list);
-//		return "board/listPage_question";
-//	}
-//	
-//	@RequestMapping(value="/listPage_chat", method=RequestMethod.GET)
-//	public String getListPage_Chat(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage, Model model) throws Exception{
-//		int count = boardService.count_chat();
-//		int lastPage = (int) Math.ceil((double)(count)/10);
-//		if(currentPage > lastPage) {
-//			currentPage = lastPage;
-//			return "redirect:/board/listPage_chat?currentPage="+lastPage;
-//		}
-//		
-//		int currPage = list(currentPage, lastPage, model);
-//		
-//		List list = boardService.listPage_chat(currPage);
-//		model.addAttribute("listPage", list);
-//
-//		
-//		
-//		return "board/listPage_chat";
-//	}
-//
-//	@RequestMapping(value="/listPage_announcement", method=RequestMethod.GET)
-//	public String getListPage_Announcement(@RequestParam(required = false, value = "currentPage", defaultValue="1")long currentPage,Model model) throws Exception{
-//		int count = boardService.count_announcement();
-//		int lastPage = (int) Math.ceil((double)(count)/10);
-//		if(currentPage > lastPage) {
-//			currentPage = lastPage;
-//			return "redirect:/board/listPage_announcement?currentPage="+lastPage;
-//		}
-//		int currPage = list(currentPage, lastPage, model);
-//		
-//		List list = boardService.listPage_announcement(currPage);
-//		model.addAttribute("listPage", list);
-//		return "board/listPage_announcement";
-//	}
 
 	// 모든 리스트 페이징 간소화용도
 	public int list(long currentPage, int lastPage, Model model) {

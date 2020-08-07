@@ -10,7 +10,6 @@
 <style>
 </style>
 <script src="//code.jquery.com/jQuery-3.5.1.min.js"></script>
-
 <script type="text/javascript">
 	var dislikeBtnData = {
 		"uno" : '${check.uno}',
@@ -96,10 +95,9 @@
 	}
 </script>
 <style>
-button.like-button, button.dislike-button{
+button.like-button, button.dislike-button {
 	background-color: white;
 }
-
 </style>
 </head>
 
@@ -114,7 +112,7 @@ button.like-button, button.dislike-button{
 	</div> -->
 		<div class="form-group">
 			<label>title </label>
-			<div class="form-control">${view.title}</div>
+			<div class="form-control"><c:out value="${view.title}" escapeXml="true"/></div>
 		</div>
 
 		<div class="form-group">
@@ -125,7 +123,9 @@ button.like-button, button.dislike-button{
 		<div class="form-group">
 			<label> content </label>
 			<textarea class="form-control col-sm-12" rows="5" readOnly>${view.content}</textarea>
+			<c:if test="${fileList.size() != 0}">
 			<br> <label><b>첨부파일</b></label> <br>
+			</c:if>
 			<c:forEach var="file" items="${fileList}">
 				<a href="/board/fileDownload?fno=${file.fno}" download>${file.originalName}</a>
 				<br>
@@ -134,7 +134,10 @@ button.like-button, button.dislike-button{
 
 		<c:if test="${isLogin}">
 			<c:if test="${!alreadyParticipated}">
-				<button class="like-button" id="like"><!-- <img src="/resources/Image/like.jpg"> -->like</button>
+				<button class="like-button" id="like">
+					<!-- <img src="/resources/Image/like.jpg"> -->
+					like
+				</button>
 				<div style="display: inline" id="cntLike">: [${countLike}]</div>
 				<button class="dislike-button" id="dislike">dislike</button>
 				<div style="display: inline" id="cntDislike">:
@@ -149,13 +152,14 @@ button.like-button, button.dislike-button{
 			<button onclick="login_require()">like</button>: [${countLike}]
 			<button onclick="login_require()">dislike</button>: [${countDislike}]
 	</c:if>
-	
-		<c:if test="${userId == view.writer}">
 		<br>
+		<c:if test="${userId == view.writer}">
+			<br>
 			<a class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
 				삭제</a>
 			<!-- 페이지 이동X 해당 페이지로의 요청 -->
-			<a class="btn btn-warning" href="/board/modify/?bno=${view.bno}">게시물 수정</a>
+			<a class="btn btn-warning" href="/board/modify/?bno=${view.bno}">게시물
+				수정</a>
 			<!-- <button id="aaa">aaa</button> -->
 		</c:if>
 
@@ -163,9 +167,11 @@ button.like-button, button.dislike-button{
 			style="display: none;">
 		<c:forEach var="commentList" items="${comment}">
 			<div class="form-group" id="${commentList.cno}">
-				<div>${commentList.comm}</div>
+				<div>
+					<c:out value="${commentList.comm}" escapeXml="true" />
+				</div>
 			</div>
-			<br>
+
 		</c:forEach>
 
 

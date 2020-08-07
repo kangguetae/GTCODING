@@ -11,10 +11,21 @@
 	</select>
 
 	<insert id="insertUser" parameterType="com.parucnc.test_3.domain.UserVO">
-		insert into user(id, pw)
-		values(#{id}, #{pw})
+		insert into user(id, pw, nickname)
+		values(#{id}, #{pw}, #{nickname})
 	</insert>
 	
+	<select id="isAdmin" resultType="com.parucnc.test_3.domain.UserVO">
+		select status
+		from user
+		where id = #{id}
+	</select>
+	
+	<select id="remID" resultType="com.parucnc.test_3.domain.UserVO">
+		select *
+		from user
+		where uno = #{uNum}
+	</select>
 	
 	
 </mapper>

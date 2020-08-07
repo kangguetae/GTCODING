@@ -38,37 +38,35 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = {"/", "/loginError"}, method = RequestMethod.GET)
-	public String home(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+	public String home(@CookieValue(value = "remID", required = false) Cookie remID, HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			@RequestParam(required = false, value = "logOut", defaultValue = "0") String logOut, Locale locale,
 			Model model) throws Exception{
 		if(request.getRequestURI().equals("/loginError")) {
 			//loginError로 들어왔을 경우
 		}
+		boolean checkBoxIsClicked = false;
 		
-//		if (session.getId() != null && !session.getId().equals("")) {
+		if(remID != null) {
+			int uNum = Integer.parseInt(remID.getValue());
+			System.out.println(remID.getValue());
+			UserVO vo = service.remID(uNum);
+			model.addAttribute("vo", vo);
+			checkBoxIsClicked = true;
+			
+		}
+		
+		model.addAttribute("checked", checkBoxIsClicked);
+		
 		try {
 			UserVO userVO = (UserVO)session.getAttribute("userVO");
 			if(userVO != null) {
-				System.out.println(userVO);
 				return "user/login";
 			}
-			
 		}
 		catch(Exception e) {
-			
+			e.printStackTrace();
 		}
-//			System.out.println(userVO.getId());
-//			session.setAttribute("userVO", userVO);
-//			return "user/login";
-//		}
-//			System.out.println(userVO);
 
-		logger.info("Welcome home! The client locale is {}.", locale);
-//		Cookie[] cookies = request.getCookies();
-//		if(logOut.equals("1")) {
-//			Cookie cookie = new Cookie("id", null);
-//			response.addCookie(cookie);
-//		}
 		
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -79,7 +77,6 @@ public class HomeController {
 
 		return "home";
 	}
-	//기다리라고 하셔서 기다리는 중에 연락드려요. 혹시 어떻게 되셨나요?
 	
 	/* 로그아웃 */
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -89,17 +86,18 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String postLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, UserVO vo,
+	public String postLogin(@CookieValue(value = "remID", required = false) Cookie remID,HttpServletRequest request, HttpServletResponse response, HttpSession session, UserVO vo,
 			Model model) throws Exception {
 		
 		UserVO userVO = service.loginCheck(vo);
-
+		boolean isAdmin = userVO.getStatus().equals("admin") ? true : false;
 //		Cookie [] cookie = request.getCookies();
 //		String id = null;
 //		boolean find = false;
-
+		
+		String checkBox = request.getParameter("check");
 		Cookie cookie;
-
+		System.out.println(checkBox);
 		try {
 			userVO.getId();
 		} catch (Exception e) {
@@ -107,18 +105,26 @@ public class HomeController {
 		}
 
 		if (vo.getPw().equals(userVO.getPw())) {
-
-//			cookie = new Cookie("id", userVO.getId());
-//			cookie.setMaxAge(60*20);
-//			cookie.setPath("/");
-//			response.addCookie(cookie);
-//			 
-//		    model.addAttribute("cookie",cookie);
-//			
+			if(checkBox != null) {
+				String uno = ""+userVO.getUno();
+				cookie = new Cookie("remID", uno);
+				cookie.setMaxAge(60*60*24*30); // 30일
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			    model.addAttribute("cookie",cookie);
+			}
+			else {
+				if(remID != null) {
+					cookie = new Cookie("remID", "");
+					cookie.setMaxAge(0);
+					response.addCookie(cookie);
+				}
+			}
 //		    logger.info(cookie.getValue());
-//		    
-//			
+		    
+			
 //			this.userID = userVO.getId();
+			model.addAttribute("isAdmin", isAdmin);
 			session.setAttribute("userVO", userVO);
 
 			return "user/login";

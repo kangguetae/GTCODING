@@ -36,24 +36,4 @@ public class UserController {
 		return "home";
 	}
 	
-//	@RequestMapping(value="/list", method = RequestMethod.GET)
-//	public String getList(Model model) throws Exception{
-//		return "board/list";
-//	}
-//	
-//	@RequestMapping(value="/write", method = RequestMethod.GET)
-//	public String getWrite(Model model) throws Exception{
-//		return "board/write";
-//	}
-	
-	
-//	@RequestMapping(value="/loginCheck", method=RequestMethod.POST)
-//	public String postLogin(UserVO vo, Model model) throws Exception{
-//		
-//		int pw = service.loginCheck(vo);
-//		
-//		System.out.println(vo.getPw()+" "+pw);
-//		
-//		return "user/login";
-//	}
 }
