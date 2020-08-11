@@ -1,16 +1,11 @@
 package Interceptor;
-
-import java.io.PrintWriter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import com.parucnc.test_3.domain.UserVO;
-
 import com.parucnc.test_3.domain.UserVO;
 
 public class Interceptor extends HandlerInterceptorAdapter{
@@ -24,7 +19,6 @@ public class Interceptor extends HandlerInterceptorAdapter{
 		throws Exception {
 		HttpSession session = request.getSession();
 		UserVO userVO = (UserVO)session.getAttribute("userVO");
-
 		try {
 			userVO.getId();
 		}

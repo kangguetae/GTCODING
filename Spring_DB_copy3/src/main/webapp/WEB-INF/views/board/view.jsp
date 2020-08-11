@@ -56,9 +56,28 @@
 			});
 		});
 
+		var t;
+
+		$(".attachment").mouseenter(function(){
+			t = $(this).text();
+			var fno = $(this).attr("id");
+			
+			//$(this).children().css("display", "inline");
+			//$(this).append("<img style='position: absolute;' src='/board/getImage?filename=${fileList.get(0).getChangedName()}'/>");
+			$(this).append("<img style='position: absolute;' src='/board/getImage?filenumber="+fno+"'/>");
+		});
+		$(".attachment").mouseleave(function(){
+			$(this).text(t);
+			
+		});
+		
+		
 	});
 
+
+	
 	window.onload = function() {
+		
 		var modify = document.getElementsByClassName("modifyBtn");
 		var cancelBtn = document
 				.getElementsByClassName("commentModify_cancelBtn");
@@ -88,11 +107,16 @@
 			});
 		}
 
+
+		
 	}
 
 	function login_require() {
 		alert("로그인이 필요한 서비스입니다.");
 	}
+
+
+	
 </script>
 <style>
 button.like-button, button.dislike-button {
@@ -102,14 +126,12 @@ button.like-button, button.dislike-button {
 </head>
 
 <body>
+
 	<div class="container">
 		<h1>view</h1>
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
 		</div>
-		<!-- <div id="attachments">
-		<a href="">첨부파일</a>
-	</div> -->
 		<div class="form-group">
 			<label>title </label>
 			<div class="form-control"><c:out value="${view.title}" escapeXml="true"/></div>
@@ -127,7 +149,8 @@ button.like-button, button.dislike-button {
 			<br> <label><b>첨부파일</b></label> <br>
 			</c:if>
 			<c:forEach var="file" items="${fileList}">
-				<a href="/board/fileDownload?fno=${file.fno}" download>${file.originalName}</a>
+				<a class="attachment" id="${file.fno}" href="/board/fileDownload?fno=${file.fno}" download>
+				${file.originalName}</a>
 				<br>
 			</c:forEach>
 		</div>
@@ -151,9 +174,9 @@ button.like-button, button.dislike-button {
 		<c:if test="${!isLogin}">
 			<button onclick="login_require()">like</button>: [${countLike}]
 			<button onclick="login_require()">dislike</button>: [${countDislike}]
-	</c:if>
+		</c:if>
 		<br>
-		<c:if test="${userId == view.writer}">
+		<c:if test="${userId == view.writer or isAdmin}">
 			<br>
 			<a class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
 				삭제</a>

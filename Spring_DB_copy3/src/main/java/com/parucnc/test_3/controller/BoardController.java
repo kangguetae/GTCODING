@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,16 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -31,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
 import com.parucnc.test_3.domain.UserVO;
@@ -40,16 +36,17 @@ import com.parucnc.test_3.domain.User_BoardVO;
 import com.parucnc.test_3.domain.fileUploadVO;
 import com.parucnc.test_3.service.BoardServiceImpl;
 import com.parucnc.test_3.service.CommentServiceImpl;
-import com.parucnc.test_3.service.UserServiceImpl;
 import com.parucnc.test_3.service.User_BoardServiceImpl;
 import com.parucnc.test_3.service.fileUploadServiceImpl;
+
+//import jdk.incubator.jpackage.internal.IOUtils;
 
 @Controller
 @RequestMapping("/board/*")
 public class BoardController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	private static final String PATH = "C:\\fileSave\\";
-	
+	public static boolean isAdmin;
 	@Inject
 	private HomeController homeCon;
 	@Inject
@@ -60,8 +57,6 @@ public class BoardController {
 	private User_BoardServiceImpl u_bService;
 	@Inject
 	private fileUploadServiceImpl fileUploadService;
-	@Inject
-	private UserServiceImpl userService; 
 	
 	// 댓글 기능 추가 (로그인한사람이름으로) 예제x 시간되면 검색기능 ---- 댓글에도 페이징 (정말 시간 남으면)
 
@@ -81,15 +76,10 @@ public class BoardController {
 		try {
 			id = getId(session);
 		} catch (Exception e) {
-//			response.setContentType("text/html; charset=UTF-8");
-//			PrintWriter writer = response.getWriter();
-//            writer.println("<script>alert('로그인이 필요한 서비스입니다.'); </script>");
-//            writer.flush();
-//            writer.close();
 			System.out.println("로그인이 필요한 서비스입니다.");
 			return "redirect:/";
 		}
-		boolean isAdmin = isAdmin(session);
+		
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("userID", id);
 
@@ -126,9 +116,8 @@ public class BoardController {
 		fileUploadVO fVO = fileUploadService.getFileInfo(fno);
 
 		String originalName = fVO.getOriginalName();
-		String changedName = fVO.getChangedName();
 		String path = fVO.getPath();
-		System.out.println(changedName);
+		logger.info(path);
 		originalName = URLEncoder.encode(originalName, "UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + originalName + "\";");
 		response.setHeader("Content-Transfer-Encoding", "binary");
@@ -153,6 +142,30 @@ public class BoardController {
 		}
 	}
 
+	@RequestMapping(value = "/getImage", method = RequestMethod.GET)
+	public void getImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		response.setContentType("application/jpeg");
+		
+		
+		int fno = Integer.parseInt(request.getParameter("filenumber"));
+		System.out.println(fno);
+		fileUploadVO vo = fileUploadService.getFileInfo(fno);
+		System.out.println(vo.getPath());
+		System.out.println(vo.getChangedName());
+		
+		String url = "file:///"+vo.getPath();
+//		System.out.println(filename);
+//		System.out.println("주소+이름"+url+filename);
+		URL fileUrl = null;
+		try {
+			fileUrl = new URL(url);
+		}
+		catch(Exception e) {
+			System.out.println("wrong url");
+		}
+		org.apache.commons.io.IOUtils.copy(fileUrl.openStream(), response.getOutputStream());
+	}
+	
 	// 게시물 열람 + 조회수 증가 + 댓글 출력
 	@RequestMapping(value = "/view/*", method = RequestMethod.GET)
 	public String getView(@CookieValue(value = "page", required = false) Cookie pageCookie,
@@ -182,23 +195,22 @@ public class BoardController {
 
 		String createdDate = vo.getRegDate().substring(0, 10);
 		String filePath = PATH + createdDate;
-		System.out.println(createdDate);
 
 		Map map = new HashMap();
 		map.put("bno", bno);
 		List<fileUploadVO> list = new ArrayList<fileUploadVO>();
-		String g = "";
 		list = fileUploadService.fileFind(map);
-
+		
+//		System.out.println(list.get(0).getPath());
+		list.get(0).getChangedName();
 		model.addAttribute("fileList", list);
 
 		File f = new File(filePath);
 		File[] files = f.listFiles();
-
-		System.out.println(g);
-
+		
+		
 		model.addAttribute("files", files);
-
+		
 		UserVO userInfo = (UserVO) session.getAttribute("userVO");
 		boolean alreadyParticipated = false;
 
@@ -219,7 +231,7 @@ public class BoardController {
 		int countLike = u_bService.countLike(testMap);
 
 		
-		boolean isAdmin = isAdmin(session);
+		
 		model.addAttribute("isAdmin", isAdmin);
 		// test
 		model.addAttribute("check", userInfo);
@@ -230,8 +242,7 @@ public class BoardController {
 		model.addAttribute("userId", id);
 		model.addAttribute("view", vo);
 
-		// 조회수 증가 - 역시 쿠키인가?
-
+		// 조회수 증가
 		String boardNumber = "[" + bno + "]";
 
 		if (pageCookie == null || !("[" + pageCookie.getValue() + "]").contains(boardNumber)) {
@@ -253,15 +264,8 @@ public class BoardController {
 			boardService.viewUpdate(bno);
 
 		}
-
 		List comment = commService.showComment(commVo);
 		model.addAttribute("comment", comment);
-		
-		
-		
-		
-		
-		
 		return "board/view";
 	}
 	
@@ -270,8 +274,7 @@ public class BoardController {
 	@RequestMapping(value = "/view", method = RequestMethod.POST)
 	public String postView(@RequestParam("bno") int bno, CommentVO vo, Model model) throws Exception {
 		commService.insert(vo);
-		
-		return "redirect:/board/view?bno=" + bno;
+		return "redirect:/board/view/?bno=" + bno;
 	}
 
 	// 게시물 작성
@@ -287,15 +290,11 @@ public class BoardController {
 		Calendar t = Calendar.getInstance();
 		String currYMD = format1.format(t.getTime());
 
-		ModelAndView mav = new ModelAndView();
-
 		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
 		List<MultipartFile> files = multi.getFiles("fileUpload");
 
 		if (files.size() != 1 || files.get(0).getSize() != 0) { // 파일 업로드 안했을때는 파일 생성 안하게
-
 			String todayPath = PATH + currYMD + "\\";
-
 			File file = new File(todayPath);
 			if (!file.exists()) {
 				file.mkdirs(); // 새로운 폴더 만들기
@@ -318,10 +317,11 @@ public class BoardController {
 				map.put("changedName", changedName);
 				map.put("path", fileRoot);
 
-				System.out.println(map);
+				
 				fileUploadService.fileSave(map);
 			}
 		}
+		model.addAttribute("isAdmin", isAdmin);
 		return "redirect:/board/listPage";
 	}
 
@@ -383,7 +383,6 @@ public class BoardController {
 		Map map = new HashMap();
 		map.put("listGenre", genre);
 		int count = boardService.count(map);
-		System.out.println(count);
 		map.put("startNum", currentPage);
 
 		List list = boardService.listPage(map);
@@ -409,7 +408,6 @@ public class BoardController {
 			return "redirect:/board/listPage?currentPage=" + lastPage;
 		}
 		int currPage = list(currentPage, lastPage, model);
-		System.out.println(currPage);
 		map.put("startNum", currPage);
 
 		List list = boardService.listPage(map);
@@ -418,7 +416,6 @@ public class BoardController {
 		model.addAttribute("genre", listGenre);
 		
 		
-		boolean isAdmin = isAdmin(session);
 		model.addAttribute("isAdmin", isAdmin);
 		
 		
@@ -494,4 +491,6 @@ public class BoardController {
 		model.addAttribute("lastPage", lastPage);
 	}
 
+	
+	
 }

@@ -32,7 +32,9 @@
 		
 		<select name="genre" size="1">
 			<option value="question">질문</option>
-			<option value="announcement" selected>공지</option>
+			<c:if test="${isAdmin}">
+				<option value="announcement" selected>공지</option>
+			</c:if>
 			<option value="chat">잡담</option>
 		</select>
 		<input class="btn btn-primary" type="submit" value="작성">

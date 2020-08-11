@@ -15,7 +15,7 @@
 		</li>
 		<c:if test="${isAdmin}">
 			<li class="page-item">
-				<a class="page-link" href="#">관리자 페이지</a>
+				<a class="page-link" href="/management/adminPage">관리자 페이지</a>
 			</li>
 		</c:if>
 	</ul>

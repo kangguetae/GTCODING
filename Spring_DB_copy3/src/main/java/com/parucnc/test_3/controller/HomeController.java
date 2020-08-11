@@ -48,11 +48,9 @@ public class HomeController {
 		
 		if(remID != null) {
 			int uNum = Integer.parseInt(remID.getValue());
-			System.out.println(remID.getValue());
 			UserVO vo = service.remID(uNum);
 			model.addAttribute("vo", vo);
 			checkBoxIsClicked = true;
-			
 		}
 		
 		model.addAttribute("checked", checkBoxIsClicked);
@@ -90,14 +88,20 @@ public class HomeController {
 			Model model) throws Exception {
 		
 		UserVO userVO = service.loginCheck(vo);
-		boolean isAdmin = userVO.getStatus().equals("admin") ? true : false;
+		boolean isAdmin;
+		try {
+			isAdmin = userVO.getStatus().equals("admin") ? true : false;
+		}
+		catch(Exception e) {
+			isAdmin = false;
+		}
+		BoardController.isAdmin = isAdmin;
 //		Cookie [] cookie = request.getCookies();
 //		String id = null;
 //		boolean find = false;
 		
 		String checkBox = request.getParameter("check");
 		Cookie cookie;
-		System.out.println(checkBox);
 		try {
 			userVO.getId();
 		} catch (Exception e) {

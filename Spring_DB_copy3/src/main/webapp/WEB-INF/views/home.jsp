@@ -20,7 +20,6 @@
 					</div>
 					<P>The time on the server is ${serverTime}.</P>
 
-
 					<form method="post" action="/">
 						<div>
 							id <input class="form-control" type="text" name="id" value="${vo.id}"/>
@@ -32,6 +31,7 @@
 							<input class="form-control btn btn-primary" type="submit"
 								value="로그인">
 						</div>
+						
 						<label for="automaticLogin">
 						<c:if test="${checked}">
 							<input id="automaticLogin" type="checkbox" name="check" value="auto" checked>
@@ -49,16 +49,6 @@
 			</div>
 		</div>
 
-
-
-
-
-		<!-- <ul>
-			<li><a href="/board/list">목록</a></li>
-
-			<li><a href="/board/listPage?currentPage=1">목록(페이징)</a></li>
-		</ul>
- -->
 	</div>
 
 	<c:if test="${!empty param.pwErr}">
@@ -73,11 +63,6 @@
 			alert("아이디X")
 		</script>
 	</c:if>
-
-
-
-
-
 
 </body>
 </html>
