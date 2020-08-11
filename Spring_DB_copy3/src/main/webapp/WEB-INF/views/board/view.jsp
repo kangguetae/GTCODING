@@ -63,7 +63,7 @@
 			var fno = $(this).attr("id");
 			
 			//$(this).children().css("display", "inline");
-			//$(this).append("<img style='position: absolute;' src='/board/getImage?filename=${fileList.get(0).getChangedName()}'/>");
+			
 			$(this).append("<img style='position: absolute;' src='/board/getImage?filenumber="+fno+"'/>");
 		});
 		$(".attachment").mouseleave(function(){

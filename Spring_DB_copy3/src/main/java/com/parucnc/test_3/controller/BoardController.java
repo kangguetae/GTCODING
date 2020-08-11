@@ -202,7 +202,7 @@ public class BoardController {
 		list = fileUploadService.fileFind(map);
 		
 //		System.out.println(list.get(0).getPath());
-		list.get(0).getChangedName();
+//		list.get(0).getChangedName();
 		model.addAttribute("fileList", list);
 
 		File f = new File(filePath);
