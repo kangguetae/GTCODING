@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="../resources/css/bootstrap.css">
+<link rel="stylesheet" href="/resources/css/bootstrap.css">
 </head>
 <body>
 	<div class="container">
@@ -40,5 +40,12 @@
 		<input class="btn btn-primary" type="submit" value="작성">
 	</form>
 	</div>
+	
+	<c:if test="${!empty param.emptyBox}">
+		<script>
+			alert("제목 또는 내용이 비어있습니다.")
+		</script>
+	</c:if>
+	
 </body>
 </html>

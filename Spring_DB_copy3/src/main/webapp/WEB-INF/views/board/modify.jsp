@@ -1,14 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-	pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="../resources/css/bootstrap.css">
+<link rel="stylesheet" href="/resources/css/bootstrap.css">
 </head>
 <body>
-	<h3>°Ô½Ã¹° ¼öÁ¤</h3>
+	<h3>ê²Œì‹œë¬¼ ìˆ˜ì •</h3>
 
 	<form method="post">
 		<label>title</label> 
@@ -17,7 +17,7 @@
 		<input type="text" value="${list.writer}" name="writer" readOnly/> <br>
 		<label>content</label>
 		<textarea rows="5" cols="50" name="content">${list.content}</textarea>
-		<br> <input type="submit" value="°Ô½Ã¹°  ¼öÁ¤">
+		<br> <input type="submit" value="ê²Œì‹œë¬¼  ìˆ˜ì •">
 	</form>
 </body>
 </html>

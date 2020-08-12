@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.genre.mappers.genre">
+	
+	<insert id="addGenre" parameterType="com.parucnc.test_3.domain.GenreVO">
+		insert into genre (genreEng, genreKor)
+		values (#{genreEng}, #{genreKor})
+	</insert>
+	
+	<select id="genreList" resultType="com.parucnc.test_3.domain.GenreVO">
+		select *
+		from genre
+		<!-- where selected = true(1) 이거 하면 장르설정가능할듯 -->
+	</select>
+	
+	
+	<select id="loginCheck" resultType="com.parucnc.test_3.domain.GenreVO">
+		select *
+		from user
+		where id like #{id}
+	</select>
+
+	<insert id="insertUser" parameterType="com.parucnc.test_3.domain.UserVO">
+		insert into user(id, pw, nickname)
+		values(#{id}, #{pw}, #{nickname})
+	</insert>
+	
+	
+	
+	
+</mapper>
+
+

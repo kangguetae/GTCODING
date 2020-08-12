@@ -5,21 +5,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script src="//code.jquery.com/jQuery-3.5.1.min.js"></script>
-
 <link rel="stylesheet" href="../resources/css/bootstrap.css">
-<script type="text/javascript" src="../resources/js/bootstrap.js">
+<script>
+window.onload = function(){
 	
+
+
 </script>
 </head>
 <body>
 	<div class="container">
-
-		<h3>로그인 되었습니다.</h3>
-
+		<h3>addGenre</h3>
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
 		</div>
+		
+		<br>
+		
+		<!-- <form method="POST" action="addGenre">
+			장르(영):<input size="10" maxlength="20" type="text" name="genreEng" /><br>
+			장르(한):<input size="10" maxlength="3"  type="text" name="genreKor" />
+			<input type="submit" value="장르추가"/>
+		</form> -->
 		
 	</div>
 </body>

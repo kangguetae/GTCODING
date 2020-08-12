@@ -63,12 +63,13 @@
 			var fno = $(this).attr("id");
 			
 			//$(this).children().css("display", "inline");
-			
-			$(this).append("<img style='position: absolute;' src='/board/getImage?filenumber="+fno+"'/>");
+			$(this).next().css("visibility", "visible");
+			//$(this).next().show();
+			//$(this).after("<img style='position:absolute;' width='200' height='130' src='/board/getImage?filenumber="+fno+"'/>");
 		});
 		$(".attachment").mouseleave(function(){
-			$(this).text(t);
-			
+			//$(this).next().hide();
+			$(this).next().css("visibility", "hidden")
 		});
 		
 		
@@ -106,17 +107,11 @@
 				console.log("삭제버튼");
 			});
 		}
-
-
-		
 	}
 
 	function login_require() {
 		alert("로그인이 필요한 서비스입니다.");
 	}
-
-
-	
 </script>
 <style>
 button.like-button, button.dislike-button {
@@ -151,6 +146,7 @@ button.like-button, button.dislike-button {
 			<c:forEach var="file" items="${fileList}">
 				<a class="attachment" id="${file.fno}" href="/board/fileDownload?fno=${file.fno}" download>
 				${file.originalName}</a>
+				<img style='visibility:hidden; position:absolute; left: 300px;' width='200' height='130' src='/board/getImage?filenumber=${file.fno}'/>
 				<br>
 			</c:forEach>
 		</div>
