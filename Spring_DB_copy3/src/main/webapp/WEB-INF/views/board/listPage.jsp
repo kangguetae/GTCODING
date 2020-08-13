@@ -15,92 +15,150 @@
 <link rel="stylesheet" href="/resources/css/bootstrap.css">
 <script type="text/javascript">
 $(document).ready(function() {
-	$("button").click(function() {
-		var genre = $(this).attr("id");
-		var c = "#" + genre;
-		var genreData = {
-				"genre" : genre,
-				"currentPage" : "1"
-			};
-		$.ajax({
-			 type : "POST"
-			,url : "/board/chooseGenre"
-			,data : genreData
-			,dataType : "json"
-			,success : function(data) { 
-				if($(c).attr("class") == "btn btn"){
-					$(c).attr("class", "btn btn-primary");
-					$(c).siblings().attr("class", "btn btn"); // 장르정하면 다른 칸 선택취소
-				 }
-				 else{
-					$(c).attr("class", "btn btn");
-				 }
-				//if(genre!="total"){
-				var results = data.list;
-				var endPage = data.endPage;
-				var lastPage = data.lastPage;
-				
-				$(".cc").siblings().remove();
-				$.each(results, function(i){
-					var v = results[i]; // clone
-					var tr = $("#aa").children();
-					$(tr).append("<tr></tr>");
-					var td = $("#aa").children().children().last();
-
-					$(td).append($("<td/>",{
-						 text:v.writer
-					}));
-					$(td).append("<td/>")
-				
-					$(td).children().last().append($("<a/>",{
-						 text:v.title
-						,href:"/board/view/?bno="+v.bno 
-					}));
-					$(td).append($("<td/>",{
-						 text:v.regDate
-					}));
-					$(td).append($("<td/>",{
-						 text:v.viewCnt
-					}));
-					$(td).append($("<td/>",{
-						 text:v.recommCnt
-					}));
-				});  // 다 삭제하고 만들기 
-				$(".pagination").children().siblings().remove();
-				for(var i=1; i<=endPage; i++){
-					$(".pagination").append("<li/>").children().addClass("page-item");
-					var liChi = $(".pagination").children().last();
-					if(i == 1){
-						$(liChi).append("<a class='page-link active'/>");
-						$(liChi).children().append($("<b/>",{
-							 text:i
-						}));
-					}
-					else{
-						$(liChi).append($("<a/>",{
-							 href:"/board/listPage?genre="+genre+"&currentPage="+i
-							,text:i
-						}));
-					}
-//  http://localhost:8080/board/listPage?genre=announcement&currentPage=2
-				}
-				if(lastPage>10){
-					$(".pagination").append("<li/>").children().addClass("page-item");
-					$(".pagination").children().last().append($("<a/>",{
-						 href:"/board/listPage?genre="+genre+"&currentPage=11"
-						,text:"다음"
-					}));
-				}
-				$(".page-item").children().addClass("page-link");
-				$()
-				//}
-			},
-			error : function() {
-				alert("error");
-			}
-		});
-	});
+	$("button").click(func);
 }); 
+var keepingGenre; // 장르저장
+var keepingPage;
+function func() {
+	console.log("keepingPage: "+keepingPage);
+	var genre = $(this).attr("id");
+	var page = $(this).text();
+	
+	if(page == "다음"){
+		page = keepingPage + 10;
+	}
+	else if(page == "이전"){
+		page = keepingPage - 10;
+	}
+	else if(!$.isNumeric(page)){ // 페이지 눌렀는지
+		page = 1;	
+	}
+	if(genre !== undefined){ // 장르선택하면 저장
+		keepingGenre = genre;
+		// console.log(keepingGenre);
+	}
+	
+	
+	var genreData = {
+			"genre" : keepingGenre,
+			"currentPage" : page
+	};
+	
+	var c = "#" + genre;
+	
+	
+	
+	$.ajax({
+		 type : "POST"
+		,url : "/board/chooseGenre"
+		,data : genreData
+		,dataType : "json"
+		,success : function(data) { 
+			if($(c).attr("class") == "btn btn"){
+				$(c).attr("class", "btn btn-primary");
+				$(c).siblings().attr("class", "btn btn"); // 장르정하면 다른 칸 선택취소
+			 }
+			 else{
+				$(c).attr("class", "btn btn");
+			 }
+			//if(genre!="total"){
+			var results = data.list;
+			var endPage = data.endPage;
+			var lastPage = data.lastPage;
+			var currentPage = data.currentPage;
+			var startPage = data.startPage;
+			keepingPage = startPage;
+			console.log("startPage: "+startPage+"| page: "+page);
+			
+			
+			
+			$(".cc").siblings().remove();
+			$.each(results, function(i){
+				var v = results[i]; // clone
+				var tr = $("#aa").children();
+				$(tr).append("<tr></tr>");
+				var td = $("#aa").children().children().last();
+				var commCnt;
+				
+				if(v.commCnt == 0){
+					commCnt = "";
+				}
+				else{
+					commCnt = " ("+v.commCnt+")";
+				}
+				
+				$(td).append($("<td/>",{
+					 text:v.writer
+				}));
+				$(td).append("<td/>")
+			
+				$(td).children().last().append($("<a/>",{
+					 text:v.title+commCnt
+					,href:"/board/view/?bno="+v.bno 
+				}));
+				$(td).append($("<td/>",{
+					 text:v.regDate
+				}));
+				$(td).append($("<td/>",{
+					 text:v.viewCnt
+				}));
+				$(td).append($("<td/>",{
+					 text:v.recommCnt
+				}));
+			});  // 다 삭제하고 만들기 
+
+			$(".pagination").children().siblings().remove();
+			if(startPage >= 11){
+				console.log("이전");
+				
+				$(".pagination").append("<li/>").children().addClass("page-item");
+				$(".pagination").children().last().append($("<a/>",{
+					 href:"#"
+					,text:"이전"
+				}));
+			}
+
+			// 아래 페이지 버튼 
+			
+			for(var i=startPage; i<=endPage; i++){
+				$(".pagination").append("<li/>").children().addClass("page-item");
+				var liChi = $(".pagination").children().last();
+				if(i == currentPage){
+					$(liChi).append("<a class='page-link active'/>");
+					$(liChi).children().append($("<b/>",{
+						 text:i
+					}));
+				}
+				else{
+					$(liChi).append($("<a/>",{
+						 href:"#"
+						 //href:"/board/listPage?genre="+genre+"&currentPage="+i
+						,text:i
+					}));
+				}
+
+			}
+			// 다음버튼
+			// startNum+10<=lastPage
+			if(lastPage>=startPage+10){
+				$(".pagination").append("<li/>").children().addClass("page-item");
+				$(".pagination").children().last().append($("<a/>",{
+					 href:"#"
+					,text:"다음"
+				}));
+			}
+			$(".page-item").children().addClass("page-link");
+			//}
+			$(".page-link").click(func);
+		}
+
+
+	
+		,error : function() {
+			alert("error");
+		}
+	});
+}
 </script>
 </head>
 

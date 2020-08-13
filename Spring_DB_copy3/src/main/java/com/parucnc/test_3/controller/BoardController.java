@@ -373,24 +373,31 @@ public class BoardController {
 	@RequestMapping(value = "/chooseGenre", method = RequestMethod.POST)
 	public Object postChooseGenre(Model model, @RequestParam Map<String, String> param) throws Exception {
 		String genre = param.get("genre");
-		genre = genre.equals("total")? null : genre;
+		int currentPage = Integer.parseInt(param.get("currentPage"));
+		if(genre != null) {
+			genre = genre.equals("total")? null : genre;
+		}
 		
-		int currentPage = 1;
+		
+		
 		Map map = new HashMap();
 		
 		map.put("listGenre", genre);
 		int count = boardService.count(map);
 		int lastPage = (int) Math.ceil((double) (count) / 10);
-		int endPage = 10 >= lastPage ? lastPage : 10;
+		int startPage = currentPage % 10 == 0 ? currentPage - 9 : currentPage - (currentPage % 10) + 1;
+		int endPage = startPage + 9 >= lastPage ? lastPage : startPage + 9;
 		map.put("startNum", currentPage);
 		
 		List list = boardService.listPage(map);
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("list", list);
+		data.put("startPage", startPage);
 		data.put("endPage", endPage);
 		data.put("lastPage", lastPage);
-		
+		data.put("currentPage", currentPage);
+		System.out.println(startPage + "|" + endPage + "|" + lastPage + "|" + currentPage);
 		return data;
 	}
 
@@ -410,7 +417,7 @@ public class BoardController {
 		}
 		int currPage = pagingList(currentPage, lastPage, model);
 		map.put("startNum", currPage);
-
+		System.out.println(currentPage + " | " + currPage);
 		List list = boardService.listPage(map);
 		model.addAttribute("listPage", list);
 		model.addAttribute("genre", listGenre);
@@ -421,7 +428,6 @@ public class BoardController {
 	
 	// 모든 리스트 페이징 간소화용도
 	public int pagingList(long currentPage, int lastPage, Model model) {
-
 		int currPage = (int) currentPage; // 현재페이지
 		currPage = currPage > lastPage ? lastPage : currPage; // 페이지 범위 벗어나면 마지막 페이지로 지정
 		int startPage = currPage % 10 == 0 ? currPage - 9 : currPage - (currPage % 10) + 1; // 이전다음 버튼 눌렀을 때 이동페이지 뒷자리
