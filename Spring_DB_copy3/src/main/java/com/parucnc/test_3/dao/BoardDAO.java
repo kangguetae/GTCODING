@@ -25,6 +25,7 @@ public interface BoardDAO {
 	public List search(Map map) throws Exception;
 	public int searchCount(Map map) throws Exception;
 	
+	public void delChoosedGenreBoard(String genre) throws Exception;
 
 	public List listPage_chat(int startNum) throws Exception;
 	public int count_chat() throws Exception;

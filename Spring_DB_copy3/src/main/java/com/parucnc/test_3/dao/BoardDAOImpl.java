@@ -130,4 +130,9 @@ public class BoardDAOImpl implements BoardDAO {
 		map.put("genres", genres);
 		return sql.selectOne(namespace+".count2", genres);
 	}
+	
+	@Override
+	public void delChoosedGenreBoard(String genre) throws Exception{
+		sql.delete(namespace+".delChoosedGenreBoard", genre);
+	}
 }

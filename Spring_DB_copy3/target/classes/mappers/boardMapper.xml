@@ -102,6 +102,12 @@
 		order by b.bno desc
 		limit #{startNum}, 10
 	</select>  -->
+	
+	<delete id="delChoosedGenreBoard" parameterType="String">
+		delete from board
+		where genre = #{genre}
+	</delete>
+	
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
 		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt,
@@ -116,7 +122,6 @@
 					#{genre}
 				</foreach>
 			</where>
-	
 		</if>
 		<!-- where genre = #{listGenre} -->
 		order by b.bno desc

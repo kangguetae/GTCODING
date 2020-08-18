@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.parucnc.test_3.domain.GenreVO;
 import com.parucnc.test_3.domain.UserVO;
+import com.parucnc.test_3.service.BoardServiceImpl;
 import com.parucnc.test_3.service.GenreServiceImpl;
 import com.parucnc.test_3.service.UserServiceImpl;
 
@@ -24,7 +25,8 @@ public class ManagementController {
 	private GenreServiceImpl genreService;
 	@Inject
 	private UserServiceImpl userService;
-	
+	@Inject
+	private BoardServiceImpl boardService;
 	
 	@RequestMapping(value="/adminPage", method = RequestMethod.GET)
 	public String getManagement(HttpSession session, Model model) throws Exception{
@@ -36,6 +38,8 @@ public class ManagementController {
 			return "redirect:/board/listPage";
 		}
 		List list = userService.userList();
+		List genreList = genreService.genreList();
+		model.addAttribute("genreList", genreList);
 		model.addAttribute("list", list);
 		return "management/adminPage";
 	}
@@ -66,14 +70,23 @@ public class ManagementController {
 	
 	@RequestMapping(value="/addGenre", method = RequestMethod.GET)
 	public String getAddGenre() throws Exception{
-		
 		return "management/addGenre";
 	}
+	
 	@RequestMapping(value="/addGenre", method = RequestMethod.POST)
 	public String postAddGenre(GenreVO vo, HttpServletRequest request) throws Exception{
 		String newGenre = request.getParameter("newGenre");
 		genreService.addGenre(vo);
 		
-		return "redirect:/board/listPage";
+		return "redirect:/management/adminPage";
+	}
+	
+	@RequestMapping(value="/deleteGenre", method = RequestMethod.POST)
+	public String postDeleteGenre(HttpServletRequest request, GenreVO vo) throws Exception{
+		//genreService.deleteGenre(vo);
+		String genre = request.getParameter("genreDelete");
+		boardService.delChoosedGenreBoard(genre);
+		
+		return "redirect:/management/adminPage";
 	}
 }

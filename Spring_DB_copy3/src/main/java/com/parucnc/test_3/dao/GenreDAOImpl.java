@@ -1,5 +1,7 @@
 package com.parucnc.test_3.dao;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
@@ -21,9 +23,14 @@ public class GenreDAOImpl implements GenreDAO{
 		sql.insert(namespace+".addGenre", vo);
 	}
 	
-//	@Override
-//	public GenreVO genreList() throws Exception{
-//		return sql.selectList();
-//	}
+	@Override
+	public List genreList() throws Exception{
+		return sql.selectList(namespace+".genreList");
+	}
+	
+	@Override
+	public void deleteGenre(GenreVO vo) throws Exception{
+		sql.delete(namespace+".deleteGenre", vo);
+	}
 	
 }

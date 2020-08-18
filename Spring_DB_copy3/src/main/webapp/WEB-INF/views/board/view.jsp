@@ -172,7 +172,7 @@ button.like-button, button.dislike-button {
 			<button onclick="login_require()">dislike</button>: [${countDislike}]
 		</c:if>
 		<br>
-		<c:if test="${userId == view.writer or isAdmin}">
+		<c:if test="${userId == view.writer or status>=1}">
 			<br>
 			<a class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
 				삭제</a>

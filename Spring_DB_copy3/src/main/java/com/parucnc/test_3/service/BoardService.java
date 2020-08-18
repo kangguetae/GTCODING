@@ -39,4 +39,6 @@ public interface BoardService {
 	public int mostRecentBno() throws Exception;
 	
 	public int count2(String[] genres) throws Exception;
+	
+	public void delChoosedGenreBoard(String genre) throws Exception;
 }

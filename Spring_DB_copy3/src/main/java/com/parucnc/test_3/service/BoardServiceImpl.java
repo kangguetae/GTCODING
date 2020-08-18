@@ -134,4 +134,9 @@ public class BoardServiceImpl implements BoardService {
 	public int count2(String[]genres) throws Exception{
 		return dao.count2(genres);
 	}
+	
+	@Override
+	public void delChoosedGenreBoard(String genre) throws Exception{
+		dao.delChoosedGenreBoard(genre);
+	}
 }

@@ -23,10 +23,18 @@ $(document).ready(function() {
 // 같은 장르 버튼 눌러서 취소할때 리스트 안나오는거 여기 페이지에서 수정
 var keepingGenre = ""; // 장르저장 input hidden -> 데이터저장용
 var keepingPage;
+var t = "";
+var count = 0;
+<c:forEach var="list" items="${genreList}">
+	t = t + "${list.genreEng}" + "$";
+</c:forEach>
+
 function func(e) {
 	var genre = $(this).attr("id");
 	var page = $(this).text();
+	var tt = t.split("$");
 	
+	tt.splice(tt.length-1);
 	if(page == "다음"){
 		page = keepingPage + 10;
 	}
@@ -36,10 +44,12 @@ function func(e) {
 	else if(!$.isNumeric(page)){ // 페이지 눌렀는지
 		page = 1;	
 	}
+
+	
 	if(genre !== undefined){	 // 장르선택하면 저장
 		var fst = genre;
 		var next = genre+"#";
-
+		
 		if(genre == "total"){
 			keepingGenre = "total#";
 		}
@@ -47,23 +57,37 @@ function func(e) {
 			if(keepingGenre.includes(next)){
 				keepingGenre = keepingGenre.replace(/total#/g , "");
 				keepingGenre = keepingGenre.replace(genre+'#', "")
-				if(!keepingGenre.includes("announcement")&&
+				
+				for(var i in tt){
+					if(!keepingGenre.includes(tt[i])){
+						count = count + 1;
+					}
+				}
+				/* if(!keepingGenre.includes("announcement")&&
 						!keepingGenre.includes("chat")&&
 						!keepingGenre.includes("question")){
 					keepingGenre = "total#";
-				}
+				} */
 			}
 			else{
 				keepingGenre += next;
-				if(keepingGenre.includes("announcement")&&
+				for(var i in tt){
+					if(keepingGenre.includes(tt[i])){
+						count = count + 1;
+					}
+				}
+				/* if(keepingGenre.includes("announcement")&&
 						keepingGenre.includes("chat")&&
 						keepingGenre.includes("question")){
 					keepingGenre = "total#";
-				}
+				} */
+			}
+			if(count == tt.length){
+				keepingGenre = "total#";
 			}
 		}
 	}
-	
+	count = 0;
 	var genreData = {
 			"genre" : keepingGenre,
 			"currentPage" : page
@@ -83,8 +107,10 @@ function func(e) {
 			
 
 			if(keepingGenre == "total#"){
-				$("#total").attr("class", "btn btn-primary");
-				$("#total").siblings().attr("class", "btn btn-light");
+				//$("#total").attr("class", "btn btn-primary");
+				$("#total").removeClass("btn btn-light").addClass("btn btn-primary");
+				//$("#total").siblings().attr("class", "btn btn-light");
+				$("#total").siblings().removeClass().addClass("btn btn-light");
 			}
 			else{
 				$("#total").attr("class", "btn btn-light");
@@ -210,24 +236,18 @@ function func(e) {
 		</div>
 		<br>
 		<div>
-			<button class="btn btn-primary" id="total">전체</button>
-			<button class="btn btn-light" id="announcement">공지</button>
-			<button class="btn btn-light" id="chat">잡담</button>
-			<button class="btn btn-light" id="question">질문</button>
+		<button class="btn btn-primary" id="total">전체</button>
+			<c:forEach var="list" items="${genreList}">
+					<button class="btn btn-light" id="${list.genreEng}">${list.genreKor}</button>
+				<!-- <script>var t =t+ ${list.genreEng};</script> -->
+			</c:forEach>
+<!-- 				<button class="btn btn-primary" id="total">전체</button>
+				<button class="btn btn-light" id="announcement">공지</button>
+				<button class="btn btn-light" id="chat">잡담</button>
+				<button class="btn btn-light" id="question">질문</button>
+ -->			
 		</div> 
-		<!-- <ul class="nav nav-pills">
-			<li class="&{btnClick};">
-				<a class="page-link" href="/board/listPage?currentPage=1">전체</a>
-			</li>
-			<li class="page-item">
-				<a class="page-link" href="/board/listPage?genre=announcement&currentPage=1">공지</a></li>
-			<li class="page-item">
-				<a class="page-link" href="/board/listPage?genre=chat&currentPage=1">잡담</a>
-			</li>
-			<li class="page-item">
-				<a class="page-link" href="/board/listPage?genre=question&currentPage=1">질문</a>
-			</li>
-		</ul> -->
+		
 
 
 

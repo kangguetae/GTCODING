@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,11 +32,16 @@
 		<input type="file" name="fileUpload" accept="image/*, video/*" multiple/>
 		
 		<select name="genre" size="1">
-			<option value="question">질문</option>
-			<c:if test="${isAdmin}">
+			<c:if test="${status ge 1}">
 				<option value="announcement" selected>공지</option>
 			</c:if>
-			<option value="chat">잡담</option>
+			<c:forEach var="list" items="${genreList}">
+				<c:if test="${list.genreEng != 'announcement'}">
+					<option value="${list.genreEng}">${list.genreKor }</option>
+				</c:if>
+			</c:forEach>
+			<!-- <option value="question">질문</option>
+			<option value="chat">잡담</option> -->
 		</select>
 		<input class="btn btn-primary" type="submit" value="작성">
 	</form>

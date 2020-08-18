@@ -9,9 +9,15 @@
 		values (#{genreEng}, #{genreKor})
 	</insert>
 	
+	<delete id="deleteGenre" parameterType="com.parucnc.test_3.domain.GenreVO">
+		delete from genre
+		where genreEng = #{genreEng}
+	</delete>
+	
 	<select id="genreList" resultType="com.parucnc.test_3.domain.GenreVO">
 		select *
 		from genre
+		
 		<!-- where selected = true(1) 이거 하면 장르설정가능할듯 -->
 	</select>
 	

@@ -30,6 +30,24 @@
 				 	<input type="submit" value="매니저등록" />
 				</form>
 			</c:if>
+			
+			<br><br>
+			<form method="POST" action="addGenre">
+				장르(영):<input size="10" maxlength="20" type="text" name="genreEng" /><br>
+				장르(한):<input size="10" maxlength="3"  type="text" name="genreKor" />
+				<input type="submit" value="장르추가"/>
+			</form>
+			
+			<br><br>
+			
+			<form method="POST" action="deleteGenre">
+				<select name="genreDelete" size="1">
+					<c:forEach var="list" items="${genreList}">
+						<option value="${list.genreEng}">${list.genreKor}</option>
+					</c:forEach>
+				</select>
+				<input type="submit" value="장르삭제"/>
+			</form>
 		</c:if>
 	</div>
 </body>

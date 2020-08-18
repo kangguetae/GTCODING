@@ -75,15 +75,20 @@ public class BoardController {
 	@RequestMapping(value = "/write", method = RequestMethod.GET)
 	public String getWrite(Model model, HttpSession session, HttpServletResponse response) throws Exception {
 		String id = null;
-
+		UserVO uservo = (UserVO)session.getAttribute("userVO");
+		int status = uservo.getStatus().equals("admin")? 2 : 1;
+		status = uservo.getStatus().equals("user")? 0 : status;
+		
 		try {
 			id = getId(session);
 		} catch (Exception e) {
 			System.out.println("로그인이 필요한 서비스입니다.");
 			return "redirect:/";
 		}
-
-		model.addAttribute("isAdmin", isAdmin);
+		List genreList = genreService.genreList();
+		
+		model.addAttribute("genreList", genreList);
+		model.addAttribute("status", status);
 		model.addAttribute("userID", id);
 
 		return "board/write";
@@ -227,9 +232,11 @@ public class BoardController {
 
 		int countDislike = u_bService.countDislike(testMap);
 		int countLike = u_bService.countLike(testMap);
-
-		model.addAttribute("isAdmin", isAdmin);
+		UserVO uservo = (UserVO)session.getAttribute("userVO");
+		int status = uservo.getStatus().equals("admin")? 2 : 1;
+		status = uservo.getStatus().equals("user")? 0 : status;
 		// test
+		model.addAttribute("status", status);
 		model.addAttribute("check", userInfo);
 		model.addAttribute("bno", bno);
 		model.addAttribute("countLike", countLike);
@@ -353,7 +360,11 @@ public class BoardController {
 
 	// 게시물 수정
 	@RequestMapping(value = "/modify", method = RequestMethod.POST)
-	public String postModify(BoardVO vo, Model model) throws Exception {
+	public String postModify(@RequestParam("bno")int bno, 
+			BoardVO vo, Model model) throws Exception {
+		if (vo.getTitle().equals("") || vo.getContent().equals("")) {
+			return "redirect:/board/modify/?bno="+bno+"&emptyBox=true";
+		}
 		boardService.update(vo);
 		return "redirect:/board/listPage";
 	}
@@ -382,12 +393,10 @@ public class BoardController {
 			genre = null;
 			map.put("genres", genre);
 			count = boardService.count(map);
-			System.out.println("전체: "+count);
 		}
 		else {
 			map.put("genres", genres);
 			count = boardService.count2(genres);
-			System.out.println("부분: "+count);
 		}
 		
 		int currentPage = Integer.parseInt(param.get("currentPage"));
@@ -397,23 +406,7 @@ public class BoardController {
 		map.put("startNum", currentPage);
 		
 		List list = boardService.listPage(map);
-		
-//v		int currentPage = Integer.parseInt(param.get("currentPage"));
-//		if(genre != null) {
-//			genre = genre.equals("total")? null : genre;
-//v		}
-//		
-//v		Map map = new HashMap();
-//		
-//v		map.put("listGenre", genre);
-//		int count = boardService.count(map);
-//		int lastPage = (int) Math.ceil((double) (count) / 10);
-//		int startPage = currentPage % 10 == 0 ? currentPage - 9 : currentPage - (currentPage % 10) + 1;
-//v		int endPage = startPage + 9 >= lastPage ? lastPage : startPage + 9;
-//v		map.put("startNum", currentPage);
-//		
-//		List list = boardService.listPage(map);
-//
+
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("list", list);
 		data.put("startPage", startPage);
@@ -444,6 +437,9 @@ public class BoardController {
 		int currPage = pagingList(currentPage, lastPage, model);
 		map.put("startNum", currPage);
 		List list = boardService.listPage(map);
+		List genreList = genreService.genreList();
+		
+		model.addAttribute("genreList", genreList);
 		model.addAttribute("listPage", list);
 		model.addAttribute("genre", listGenre);
 		model.addAttribute("isAdmin", isAdmin);

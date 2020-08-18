@@ -3,6 +3,8 @@ package com.parucnc.test_3.domain;
 public class GenreVO {
 	private int gno;
 	private String genreEng;
+	private String genreKor;
+	
 	public int getGno() {
 		return gno;
 	}
@@ -21,6 +23,6 @@ public class GenreVO {
 	public void setGenreKor(String genreKor) {
 		this.genreKor = genreKor;
 	}
-	private String genreKor;
+	
 
 }

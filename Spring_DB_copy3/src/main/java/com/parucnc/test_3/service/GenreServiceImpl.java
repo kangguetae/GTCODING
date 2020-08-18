@@ -1,5 +1,7 @@
 package com.parucnc.test_3.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -18,5 +20,15 @@ public class GenreServiceImpl implements GenreService{
 	@Override
 	public void addGenre(GenreVO vo) throws Exception{
 		dao.addGenre(vo);
+	}
+	
+	@Override
+	public List genreList() throws Exception{
+		return dao.genreList();
+	}
+	
+	@Override
+	public void deleteGenre(GenreVO vo) throws Exception{
+		dao.deleteGenre(vo);
 	}
 }
