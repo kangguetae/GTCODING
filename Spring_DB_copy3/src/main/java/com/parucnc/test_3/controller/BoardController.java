@@ -373,31 +373,53 @@ public class BoardController {
 	@RequestMapping(value = "/chooseGenre", method = RequestMethod.POST)
 	public Object postChooseGenre(Model model, @RequestParam Map<String, String> param) throws Exception {
 		String genre = param.get("genre");
-		int currentPage = Integer.parseInt(param.get("currentPage"));
-		if(genre != null) {
-			genre = genre.equals("total")? null : genre;
-		}
-		
-		
+		String [] genres = param.get("genre").split("#");
 		
 		Map map = new HashMap();
+		int count;
+		genre = genre.replace("#", "");
+		if(genre.equals("total")) {
+			genre = null;
+			map.put("genres", genre);
+			count = boardService.count(map);
+			System.out.println("전체: "+count);
+		}
+		else {
+			map.put("genres", genres);
+			count = boardService.count2(genres);
+			System.out.println("부분: "+count);
+		}
 		
-		map.put("listGenre", genre);
-		int count = boardService.count(map);
+		int currentPage = Integer.parseInt(param.get("currentPage"));
 		int lastPage = (int) Math.ceil((double) (count) / 10);
 		int startPage = currentPage % 10 == 0 ? currentPage - 9 : currentPage - (currentPage % 10) + 1;
 		int endPage = startPage + 9 >= lastPage ? lastPage : startPage + 9;
 		map.put("startNum", currentPage);
 		
 		List list = boardService.listPage(map);
-
+		
+//v		int currentPage = Integer.parseInt(param.get("currentPage"));
+//		if(genre != null) {
+//			genre = genre.equals("total")? null : genre;
+//v		}
+//		
+//v		Map map = new HashMap();
+//		
+//v		map.put("listGenre", genre);
+//		int count = boardService.count(map);
+//		int lastPage = (int) Math.ceil((double) (count) / 10);
+//		int startPage = currentPage % 10 == 0 ? currentPage - 9 : currentPage - (currentPage % 10) + 1;
+//v		int endPage = startPage + 9 >= lastPage ? lastPage : startPage + 9;
+//v		map.put("startNum", currentPage);
+//		
+//		List list = boardService.listPage(map);
+//
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("list", list);
 		data.put("startPage", startPage);
 		data.put("endPage", endPage);
 		data.put("lastPage", lastPage);
 		data.put("currentPage", currentPage);
-		System.out.println(startPage + "|" + endPage + "|" + lastPage + "|" + currentPage);
 		return data;
 	}
 
@@ -406,7 +428,11 @@ public class BoardController {
 			@RequestParam(required = false, value = "currentPage", defaultValue = "1") long currentPage,
 			@RequestParam(required = false, value = "genre") String listGenre, Model model, UserVO vo)
 			throws Exception {
-
+		UserVO uservo = (UserVO)session.getAttribute("userVO");
+		int status = uservo.getStatus().equals("admin")? 2 : 1;
+		status = uservo.getStatus().equals("user")? 0 : status;
+		
+		
 		Map map = new HashMap();
 		map.put("listGenre", listGenre);
 		int count = boardService.count(map);
@@ -417,12 +443,11 @@ public class BoardController {
 		}
 		int currPage = pagingList(currentPage, lastPage, model);
 		map.put("startNum", currPage);
-		System.out.println(currentPage + " | " + currPage);
 		List list = boardService.listPage(map);
 		model.addAttribute("listPage", list);
 		model.addAttribute("genre", listGenre);
 		model.addAttribute("isAdmin", isAdmin);
-		System.out.println(lastPage);
+		model.addAttribute("status", status);
 		return "board/listPage";
 	}
 	
@@ -437,7 +462,6 @@ public class BoardController {
 		model.addAttribute("startNum", startPage);
 		model.addAttribute("endNum", endPage);
 		model.addAttribute("lastPage", lastPage);
-		System.out.println("endpage: "+endPage);
 		return currPage;
 	}
 	

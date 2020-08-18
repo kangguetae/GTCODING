@@ -123,4 +123,11 @@ public class BoardDAOImpl implements BoardDAO {
 	public int mostRecentBno() throws Exception{
 		return sql.selectOne(namespace+".mostRecentBno");
 	}
+	
+	@Override
+	public int count2(String[]genres) throws Exception{
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("genres", genres);
+		return sql.selectOne(namespace+".count2", genres);
+	}
 }

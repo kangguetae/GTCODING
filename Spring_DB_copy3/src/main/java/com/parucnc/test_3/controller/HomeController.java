@@ -37,6 +37,12 @@ public class HomeController {
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String getTest(Model model) throws Exception{
+		System.out.println("connect success");
+		return "board/test";
+	}
 	@RequestMapping(value = {"/", "/loginError"}, method = RequestMethod.GET)
 	public String home(@CookieValue(value = "remID", required = false) Cookie remID, HttpServletRequest request, HttpServletResponse response, HttpSession session,
 			@RequestParam(required = false, value = "logOut", defaultValue = "0") String logOut, Locale locale,
@@ -82,6 +88,7 @@ public class HomeController {
 		session.invalidate();
 		return "redirect:/";
 	}
+		
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public String postLogin(@CookieValue(value = "remID", required = false) Cookie remID,HttpServletRequest request, HttpServletResponse response, HttpSession session, UserVO vo,

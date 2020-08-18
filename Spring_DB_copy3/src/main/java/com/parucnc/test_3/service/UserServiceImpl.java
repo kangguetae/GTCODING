@@ -1,5 +1,7 @@
 package com.parucnc.test_3.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -31,5 +33,15 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserVO remID(int uNum) throws Exception{
 		return dao.remID(uNum);
+	}
+	
+	@Override
+	public List userList() throws Exception{
+		return dao.userList();
+	}
+	
+	@Override
+	public void empowerment(String id) throws Exception{
+		dao.empowerment(id);
 	}
 }

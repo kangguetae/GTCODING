@@ -37,4 +37,6 @@ public interface BoardService {
 	
 	public void likeOrDislike(Map map) throws Exception;
 	public int mostRecentBno() throws Exception;
+	
+	public int count2(String[] genres) throws Exception;
 }

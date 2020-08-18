@@ -13,7 +13,7 @@
 		<li class="page-item">
 			<a class="page-link" href="/board/listPage?currentPage=1">목록(페이징)</a>
 		</li>
-		<c:if test="${isAdmin}">
+		<c:if test="${status ge 1}">
 			<li class="page-item">
 				<a class="page-link" href="/management/adminPage">관리자 페이지</a>
 			</li>

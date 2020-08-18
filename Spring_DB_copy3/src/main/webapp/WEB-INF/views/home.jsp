@@ -48,7 +48,10 @@
 				</div>
 			</div>
 		</div>
-
+		
+		
+		
+		
 	</div>
 
 	<c:if test="${!empty param.pwErr}">
@@ -63,6 +66,8 @@
 			alert("아이디X")
 		</script>
 	</c:if>
+
+	
 
 </body>
 </html>

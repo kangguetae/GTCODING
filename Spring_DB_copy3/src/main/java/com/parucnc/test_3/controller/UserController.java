@@ -25,8 +25,20 @@ public class UserController {
 	
 	@RequestMapping(value="/signUp", method = RequestMethod.POST)
 	public String postSignUp(UserVO vo, Model model) throws Exception{
+		
+		if(vo.getId() == "" || vo.getPw() == "") {
+			return "redirect:/user/signUp?blankErr=true";
+		}
+		else if(vo.getId().length() < 5) {
+			return "redirect:/user/signUp?shortIdErr=true";
+		}
+		else if(vo.getPw().length() < 4) {
+			return "redirect:/user/signUp?shortPwErr=true";
+		}
+		else if(!vo.getId().matches("[^A-Za-z0-9]")||!vo.getPw().matches("[^A-Za-z0-9]")) {
+			return "redirect:/user/signUp?unvalidIDErr=true";
+		}
 		try{
-			System.out.println("123");
 			service.insertUser(vo);
 		}
 		catch(Exception e) {

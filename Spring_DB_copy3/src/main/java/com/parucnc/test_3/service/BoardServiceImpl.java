@@ -129,4 +129,9 @@ public class BoardServiceImpl implements BoardService {
 	public int mostRecentBno() throws Exception{
 		return dao.mostRecentBno();
 	}
+	
+	@Override
+	public int count2(String[]genres) throws Exception{
+		return dao.count2(genres);
+	}
 }

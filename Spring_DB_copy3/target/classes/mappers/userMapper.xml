@@ -27,6 +27,17 @@
 		where uno = #{uNum}
 	</select>
 	
+	<select id="userList" resultType="string">
+		select id
+		from user
+		where status = "user"
+	</select>
+	
+	<update id="empowerment" parameterType="com.parucnc.test_3.domain.UserVO">
+		update user 
+		set status = "manager" 
+		where id=#{id}
+	</update>
 	
 </mapper>
 

@@ -17,10 +17,13 @@
 $(document).ready(function() {
 	$("button").click(func);
 }); 
-var keepingGenre; // 장르저장
+//string.includes("")
+//string.replace("전","후")
+
+// 같은 장르 버튼 눌러서 취소할때 리스트 안나오는거 여기 페이지에서 수정
+var keepingGenre = ""; // 장르저장 input hidden -> 데이터저장용
 var keepingPage;
-function func() {
-	console.log("keepingPage: "+keepingPage);
+function func(e) {
 	var genre = $(this).attr("id");
 	var page = $(this).text();
 	
@@ -33,11 +36,33 @@ function func() {
 	else if(!$.isNumeric(page)){ // 페이지 눌렀는지
 		page = 1;	
 	}
-	if(genre !== undefined){ // 장르선택하면 저장
-		keepingGenre = genre;
-		// console.log(keepingGenre);
+	if(genre !== undefined){	 // 장르선택하면 저장
+		var fst = genre;
+		var next = genre+"#";
+
+		if(genre == "total"){
+			keepingGenre = "total#";
+		}
+		else{
+			if(keepingGenre.includes(next)){
+				keepingGenre = keepingGenre.replace(/total#/g , "");
+				keepingGenre = keepingGenre.replace(genre+'#', "")
+				if(!keepingGenre.includes("announcement")&&
+						!keepingGenre.includes("chat")&&
+						!keepingGenre.includes("question")){
+					keepingGenre = "total#";
+				}
+			}
+			else{
+				keepingGenre += next;
+				if(keepingGenre.includes("announcement")&&
+						keepingGenre.includes("chat")&&
+						keepingGenre.includes("question")){
+					keepingGenre = "total#";
+				}
+			}
+		}
 	}
-	
 	
 	var genreData = {
 			"genre" : keepingGenre,
@@ -47,20 +72,31 @@ function func() {
 	var c = "#" + genre;
 	
 	
-	
 	$.ajax({
 		 type : "POST"
 		,url : "/board/chooseGenre"
 		,data : genreData
 		,dataType : "json"
 		,success : function(data) { 
-			if($(c).attr("class") == "btn btn"){
-				$(c).attr("class", "btn btn-primary");
-				$(c).siblings().attr("class", "btn btn"); // 장르정하면 다른 칸 선택취소
-			 }
-			 else{
-				$(c).attr("class", "btn btn");
-			 }
+			
+			// genre가 total이면 total 빼고 전부 class="btn btn"으로 바꾸면 되겠다.
+			
+
+			if(keepingGenre == "total#"){
+				$("#total").attr("class", "btn btn-primary");
+				$("#total").siblings().attr("class", "btn btn-light");
+			}
+			else{
+				$("#total").attr("class", "btn btn-light");
+				if($(c).attr("class") == "btn btn-light"){
+					$(c).attr("class", "btn btn-primary");
+					//$$  removeClass(이것만 뽑아쓰기)    attr(부시고 새로짓는느낌?)
+					 // 장르정하면 다른 칸 선택취소
+				 }
+				 else{
+					$(c).attr("class", "btn btn-light");
+				 }
+			}
 			//if(genre!="total"){
 			var results = data.list;
 			var endPage = data.endPage;
@@ -68,8 +104,6 @@ function func() {
 			var currentPage = data.currentPage;
 			var startPage = data.startPage;
 			keepingPage = startPage;
-			console.log("startPage: "+startPage+"| page: "+page);
-			
 			
 			
 			$(".cc").siblings().remove();
@@ -109,31 +143,35 @@ function func() {
 
 			$(".pagination").children().siblings().remove();
 			if(startPage >= 11){
-				console.log("이전");
-				
 				$(".pagination").append("<li/>").children().addClass("page-item");
 				$(".pagination").children().last().append($("<a/>",{
-					 href:"#"
-					,text:"이전"
+					// href:"#"
+					//,
+					text:"이전"
 				}));
 			}
 
 			// 아래 페이지 버튼 
-			
 			for(var i=startPage; i<=endPage; i++){
-				$(".pagination").append("<li/>").children().addClass("page-item");
+				if(i == currentPage) {
+					$(".pagination").append("<li/>").children().last().addClass("page-item active");
+				}
+				else {
+					$(".pagination").append("<li/>").children().addClass("page-item");
+				}
 				var liChi = $(".pagination").children().last();
 				if(i == currentPage){
-					$(liChi).append("<a class='page-link active'/>");
+					$(liChi).append("<a class='page-link'/>");
 					$(liChi).children().append($("<b/>",{
 						 text:i
 					}));
 				}
 				else{
 					$(liChi).append($("<a/>",{
-						 href:"#"
+						 //href:"#"
 						 //href:"/board/listPage?genre="+genre+"&currentPage="+i
-						,text:i
+						//,
+						text:i
 					}));
 				}
 
@@ -143,8 +181,9 @@ function func() {
 			if(lastPage>=startPage+10){
 				$(".pagination").append("<li/>").children().addClass("page-item");
 				$(".pagination").children().last().append($("<a/>",{
-					 href:"#"
-					,text:"다음"
+					// href:"#"
+					//,
+					text:"다음"
 				}));
 			}
 			$(".page-item").children().addClass("page-link");
@@ -171,10 +210,10 @@ function func() {
 		</div>
 		<br>
 		<div>
-			<button class="btn btn" id="total">전체</button>
-			<button class="btn btn" id="announcement">공지</button>
-			<button class="btn btn" id="chat">잡담</button>
-			<button class="btn btn" id="question">질문</button>
+			<button class="btn btn-primary" id="total">전체</button>
+			<button class="btn btn-light" id="announcement">공지</button>
+			<button class="btn btn-light" id="chat">잡담</button>
+			<button class="btn btn-light" id="question">질문</button>
 		</div> 
 		<!-- <ul class="nav nav-pills">
 			<li class="&{btnClick};">
@@ -193,7 +232,8 @@ function func() {
 
 
 		<div class="text-center">
-			<table id = "aa" class="table table-striped">
+			<table id = "aa" class="table table-hover">
+			<!-- <thead> -->
 				<tr class="cc">
 					<th>글쓴이</th>
 					<th>제목</th>
@@ -201,7 +241,8 @@ function func() {
 					<th>조회수</th>
 					<th>추천수</th>
 				</tr>
-				
+				<!-- </thead> -->
+				<!-- <tbody> -->
 				<c:forEach var="list" items="${listPage}">
 					<tr>
 						<td>${list.writer}</td>
@@ -218,6 +259,7 @@ function func() {
 						<td>${list.recommCnt}</td>
 					</tr>
 				</c:forEach>
+				<!-- </tbody> -->
 			</table>
 		</div>
 

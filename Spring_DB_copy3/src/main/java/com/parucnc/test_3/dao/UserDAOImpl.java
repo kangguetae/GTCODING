@@ -1,5 +1,7 @@
 package com.parucnc.test_3.dao;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
@@ -20,9 +22,6 @@ public class UserDAOImpl implements UserDAO{
 	
 	@Override
 	public UserVO loginCheck(UserVO vo) throws Exception{
-//		Object a = sql.selectOne(namespace+".loginCheck", vo);
-//		System.out.println(a);
-//		return null;
 		return sql.selectOne(namespace+".loginCheck", vo);
 	}
 	
@@ -39,5 +38,15 @@ public class UserDAOImpl implements UserDAO{
 	@Override
 	public UserVO remID(int uNum) throws Exception{
 		return sql.selectOne(namespace+".remID", uNum);
+	}
+	
+	@Override
+	public List userList() throws Exception{
+		return sql.selectList(namespace+".userList");
+	}
+	
+	@Override
+	public void empowerment(String id) throws Exception{
+		sql.update(namespace+".empowerment", id);
 	}
 }
