@@ -83,7 +83,7 @@ public class ManagementController {
 	
 	@RequestMapping(value="/deleteGenre", method = RequestMethod.POST)
 	public String postDeleteGenre(HttpServletRequest request, GenreVO vo) throws Exception{
-		//genreService.deleteGenre(vo);
+//		genreService.deleteGenre(vo);
 		String genre = request.getParameter("genreDelete");
 		boardService.delChoosedGenreBoard(genre);
 		

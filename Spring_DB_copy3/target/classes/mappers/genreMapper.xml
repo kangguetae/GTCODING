@@ -22,18 +22,6 @@
 	</select>
 	
 	
-	<select id="loginCheck" resultType="com.parucnc.test_3.domain.GenreVO">
-		select *
-		from user
-		where id like #{id}
-	</select>
-
-	<insert id="insertUser" parameterType="com.parucnc.test_3.domain.UserVO">
-		insert into user(id, pw, nickname)
-		values(#{id}, #{pw}, #{nickname})
-	</insert>
-	
-	
 	
 	
 </mapper>

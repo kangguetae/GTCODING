@@ -167,7 +167,7 @@ function func(e) {
 				}));
 			});  // 다 삭제하고 만들기 
 
-			$(".pagination").children().siblings().remove();
+			$(".pagination").children().remove();
 			if(startPage >= 11){
 				$(".pagination").append("<li/>").children().addClass("page-item");
 				$(".pagination").children().last().append($("<a/>",{
@@ -178,11 +178,15 @@ function func(e) {
 			}
 
 			// 아래 페이지 버튼 
+			
 			for(var i=startPage; i<=endPage; i++){
+				
 				if(i == currentPage) {
+					console.log("1");
 					$(".pagination").append("<li/>").children().last().addClass("page-item active");
 				}
 				else {
+					console.log("2");
 					$(".pagination").append("<li/>").children().addClass("page-item");
 				}
 				var liChi = $(".pagination").children().last();
@@ -202,6 +206,7 @@ function func(e) {
 				}
 
 			}
+			console.log("-----------");
 			// 다음버튼
 			// startNum+10<=lastPage
 			if(lastPage>=startPage+10){
