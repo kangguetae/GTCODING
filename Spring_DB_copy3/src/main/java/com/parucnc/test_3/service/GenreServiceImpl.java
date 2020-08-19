@@ -28,7 +28,7 @@ public class GenreServiceImpl implements GenreService{
 	}
 	
 	@Override
-	public void deleteGenre(GenreVO vo) throws Exception{
-		dao.deleteGenre(vo);
+	public void deleteGenre(String genreEng) throws Exception{
+		dao.deleteGenre(genreEng);
 	}
 }

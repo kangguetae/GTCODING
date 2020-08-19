@@ -37,7 +37,9 @@
 			<form method="POST" action="deleteGenre">
 				<select class="form-control" name="genreDelete" size="1">
 					<c:forEach var="list" items="${genreList}">
-						<option value="${list.genreEng}">${list.genreKor}</option>
+						<c:if test="${list.genreEng ne 'announcement'}">
+							<option value="${list.genreEng}">${list.genreKor}</option>
+						</c:if>
 					</c:forEach>
 				</select>
 				<button class="btn btn-primary">장르삭제</button>
@@ -54,11 +56,30 @@
 					</select>
 				 	<button class="btn btn-primary">매니저등록</button>
 				</form>
+				
+				<br>
+				
+				<form method="POST" action="deprivation">
+					<select class="form-control" name="manager" size="1">
+						<c:forEach var="manager" items="${managerList}">
+							<option value="${manager}">${manager}</option>
+						</c:forEach>
+					</select>
+					<button class="btn btn-danger">권한박탈</button>
+				</form>
 			</c:if>
 			
 			
 			
 		</c:if>
 	</div>
+	
+	
+	<c:if test="${!empty param.genreNull}">
+		<script>
+			alert("추가할 장르를 전부 입력해주세요")
+		</script>
+	</c:if>
+	
 </body>
 </html>

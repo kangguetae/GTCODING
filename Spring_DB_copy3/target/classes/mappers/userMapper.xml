@@ -39,6 +39,19 @@
 		where id=#{id}
 	</update>
 	
+	<update id="deprivation" parameterType="com.parucnc.test_3.domain.UserVO">
+		update user 
+		set status = "user" 
+		where id=#{id}
+	</update>
+	
+	<select id="managerList" resultType="string">
+		select id
+		from user
+		where status = "manager"
+		
+	</select>
+	
 </mapper>
 
 

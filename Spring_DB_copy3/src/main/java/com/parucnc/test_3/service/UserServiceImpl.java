@@ -44,4 +44,14 @@ public class UserServiceImpl implements UserService{
 	public void empowerment(String id) throws Exception{
 		dao.empowerment(id);
 	}
+	
+	@Override
+	public List managerList() throws Exception{
+		return dao.managerList();
+	}
+	
+	@Override
+	public void deprivation(String id) throws Exception{
+		dao.deprivation(id);
+	}
 }

@@ -49,4 +49,14 @@ public class UserDAOImpl implements UserDAO{
 	public void empowerment(String id) throws Exception{
 		sql.update(namespace+".empowerment", id);
 	}
+	
+	@Override
+	public List managerList() throws Exception{
+		return sql.selectList(namespace+".managerList");
+	}
+	
+	@Override
+	public void deprivation(String id) throws Exception{
+		sql.update(namespace+".deprivation", id);
+	}
 }

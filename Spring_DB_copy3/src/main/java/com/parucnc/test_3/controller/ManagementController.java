@@ -39,16 +39,25 @@ public class ManagementController {
 		}
 		List list = userService.userList();
 		List genreList = genreService.genreList();
+		List managerList = userService.managerList();
+		
+		model.addAttribute("managerList", managerList);
 		model.addAttribute("genreList", genreList);
 		model.addAttribute("list", list);
 		return "management/adminPage";
 	}
 	
 	@RequestMapping(value="/authority", method = RequestMethod.POST)
-	public String post(HttpServletRequest request, Model model) throws Exception{
+	public String postAuthority(HttpServletRequest request) throws Exception{
 		String id = request.getParameter("user");
 		userService.empowerment(id);
-		System.out.println(id);
+		return "redirect:/management/adminPage";
+	}
+	
+	@RequestMapping(value="/deprivation", method = RequestMethod.POST)
+	public String postDisprivation(HttpServletRequest request) throws Exception{
+		String id = request.getParameter("manager");
+		userService.deprivation(id);
 		return "redirect:/management/adminPage";
 	}
 		
@@ -62,8 +71,6 @@ public class ManagementController {
 		catch (Exception e) {
 			status = -1;
 		}
-//		int status2 = vo.getStatus().equals("manager")? status : 0;
-//		boolean isAdmin = vo.getStatus().equals("admin") ? true : false;
 		model.addAttribute("status", status);
 		return status;
 	}
@@ -75,17 +82,26 @@ public class ManagementController {
 	
 	@RequestMapping(value="/addGenre", method = RequestMethod.POST)
 	public String postAddGenre(GenreVO vo, HttpServletRequest request) throws Exception{
-		String newGenre = request.getParameter("newGenre");
-		genreService.addGenre(vo);
+
+		if(vo.getGenreEng().equals("") || vo.getGenreEng()==""||vo.getGenreEng().equals(null)
+				||vo.getGenreEng()==null||vo.getGenreKor().equals("")||vo.getGenreKor()==""
+				||vo.getGenreKor()==null||vo.getGenreKor().equals(null)) {
+			return "redirect:/management/adminPage?genreNull=true";
+		}
+			
 		
+			
+		genreService.addGenre(vo);
 		return "redirect:/management/adminPage";
 	}
 	
 	@RequestMapping(value="/deleteGenre", method = RequestMethod.POST)
 	public String postDeleteGenre(HttpServletRequest request, GenreVO vo) throws Exception{
-//		genreService.deleteGenre(vo);
 		String genre = request.getParameter("genreDelete");
-		boardService.delChoosedGenreBoard(genre);
+		System.out.println(genre);
+//		System.out.println(vo.getGenreEng());
+		genreService.deleteGenre(genre);
+//		boardService.delChoosedGenreBoard(genre);
 		
 		return "redirect:/management/adminPage";
 	}

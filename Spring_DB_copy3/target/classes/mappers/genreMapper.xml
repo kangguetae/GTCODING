@@ -9,7 +9,7 @@
 		values (#{genreEng}, #{genreKor})
 	</insert>
 	
-	<delete id="deleteGenre" parameterType="com.parucnc.test_3.domain.GenreVO">
+	<delete id="deleteGenre" parameterType="String">
 		delete from genre
 		where genreEng = #{genreEng}
 	</delete>

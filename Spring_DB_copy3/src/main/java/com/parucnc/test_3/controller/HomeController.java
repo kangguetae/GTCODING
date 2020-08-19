@@ -131,29 +131,14 @@ public class HomeController {
 					response.addCookie(cookie);
 				}
 			}
-//		    logger.info(cookie.getValue());
-		    
-			
-//			this.userID = userVO.getId();
+
 			model.addAttribute("isAdmin", isAdmin);
 			session.setAttribute("userVO", userVO);
 
-			return "user/login";
+			return "redirect:/board/listPage";
 		}
 
 		return "redirect:/?pwErr=true";
 	}
-
-//	@RequestMapping(value = "/list", method = RequestMethod.GET)
-//	 public String getList(Model model) throws Exception {
-//	  
-//	  List list1 = null;
-//	  list1 = service.list();
-//	  
-//	  System.out.println(list1);
-//	  model.addAttribute("list1", list1);    // 내일 와서 시도 ㄱㄱ
-//	  
-//	  return "home";
-//	 }
 
 }

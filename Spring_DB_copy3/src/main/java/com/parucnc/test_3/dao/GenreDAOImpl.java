@@ -29,8 +29,8 @@ public class GenreDAOImpl implements GenreDAO{
 	}
 	
 	@Override
-	public void deleteGenre(GenreVO vo) throws Exception{
-		sql.delete(namespace+".deleteGenre", vo);
+	public void deleteGenre(String genreEng) throws Exception{
+		sql.delete(namespace+".deleteGenre", genreEng);
 	}
 	
 }

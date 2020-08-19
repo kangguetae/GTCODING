@@ -7,5 +7,5 @@ import com.parucnc.test_3.domain.GenreVO;
 public interface GenreDAO {
 	public void addGenre(GenreVO vo) throws Exception;
 	public List genreList() throws Exception;
-	public void deleteGenre(GenreVO vo) throws Exception;
+	public void deleteGenre(String genreEng) throws Exception;
 }

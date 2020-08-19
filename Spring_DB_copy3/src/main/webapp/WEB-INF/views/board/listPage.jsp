@@ -63,11 +63,6 @@ function func(e) {
 						count = count + 1;
 					}
 				}
-				/* if(!keepingGenre.includes("announcement")&&
-						!keepingGenre.includes("chat")&&
-						!keepingGenre.includes("question")){
-					keepingGenre = "total#";
-				} */
 			}
 			else{
 				keepingGenre += next;
@@ -76,11 +71,6 @@ function func(e) {
 						count = count + 1;
 					}
 				}
-				/* if(keepingGenre.includes("announcement")&&
-						keepingGenre.includes("chat")&&
-						keepingGenre.includes("question")){
-					keepingGenre = "total#";
-				} */
 			}
 			if(count == tt.length){
 				keepingGenre = "total#";
@@ -92,9 +82,7 @@ function func(e) {
 			"genre" : keepingGenre,
 			"currentPage" : page
 	};
-	
 	var c = "#" + genre;
-	
 	
 	$.ajax({
 		 type : "POST"
@@ -103,9 +91,6 @@ function func(e) {
 		,dataType : "json"
 		,success : function(data) { 
 			
-			// genre가 total이면 total 빼고 전부 class="btn btn"으로 바꾸면 되겠다.
-			
-
 			if(keepingGenre == "total#"){
 				//$("#total").attr("class", "btn btn-primary");
 				$("#total").removeClass("btn btn-light").addClass("btn btn-primary");
@@ -123,7 +108,6 @@ function func(e) {
 					$(c).attr("class", "btn btn-light");
 				 }
 			}
-			//if(genre!="total"){
 			var results = data.list;
 			var endPage = data.endPage;
 			var lastPage = data.lastPage;
@@ -171,8 +155,6 @@ function func(e) {
 			if(startPage >= 11){
 				$(".pagination").append("<li/>").children().addClass("page-item");
 				$(".pagination").children().last().append($("<a/>",{
-					// href:"#"
-					//,
 					text:"이전"
 				}));
 			}
@@ -182,11 +164,9 @@ function func(e) {
 			for(var i=startPage; i<=endPage; i++){
 				
 				if(i == currentPage) {
-					console.log("1");
 					$(".pagination").append("<li/>").children().last().addClass("page-item active");
 				}
 				else {
-					console.log("2");
 					$(".pagination").append("<li/>").children().addClass("page-item");
 				}
 				var liChi = $(".pagination").children().last();
@@ -198,32 +178,22 @@ function func(e) {
 				}
 				else{
 					$(liChi).append($("<a/>",{
-						 //href:"#"
-						 //href:"/board/listPage?genre="+genre+"&currentPage="+i
-						//,
 						text:i
 					}));
 				}
 
 			}
-			console.log("-----------");
-			// 다음버튼
-			// startNum+10<=lastPage
+			
 			if(lastPage>=startPage+10){
 				$(".pagination").append("<li/>").children().addClass("page-item");
 				$(".pagination").children().last().append($("<a/>",{
-					// href:"#"
-					//,
 					text:"다음"
 				}));
 			}
 			$(".page-item").children().addClass("page-link");
-			//}
 			$(".page-link").click(func);
 		}
 
-
-	
 		,error : function() {
 			alert("error");
 		}
@@ -244,17 +214,9 @@ function func(e) {
 		<button class="btn btn-primary" id="total">전체</button>
 			<c:forEach var="list" items="${genreList}">
 					<button class="btn btn-light" id="${list.genreEng}">${list.genreKor}</button>
-				<!-- <script>var t =t+ ${list.genreEng};</script> -->
-			</c:forEach>
-<!-- 				<button class="btn btn-primary" id="total">전체</button>
-				<button class="btn btn-light" id="announcement">공지</button>
-				<button class="btn btn-light" id="chat">잡담</button>
-				<button class="btn btn-light" id="question">질문</button>
- -->			
+			</c:forEach>	
 		</div> 
 		
-
-
 
 		<div class="text-center">
 			<table id = "aa" class="table table-hover">
@@ -288,45 +250,7 @@ function func(e) {
 			</table>
 		</div>
 
-		<!-- 글 장르가 정해진경우 -->
-
-		<c:if test="${genre != null}">
-			<div class="row justify-content-center">
-				<div class="text-center" id="selectPage">
-					<div class="col-md-offset-3">
-						<ul class="pagination">
-							<c:if test="${startNum >= 11}">
-								<li class="page-item"><a class="page-link"
-									href="/board/listPage?genre=${genre}&currentPage=${startNum-10}">이전</a>
-								</li>
-							</c:if>
-							<c:forEach var="page" begin="${startNum}" end="${endNum}">
-
-								<c:if test="${page ne currentPage}">
-									<li class="page-item"><a class="page-link"
-										href="/board/listPage?genre=${genre}&currentPage=${page}">${page}</a>
-									</li>
-								</c:if>
-								<c:if test="${page eq currentPage}">
-									<li class="page-item active"><a class="page-link"><b> ${page}</b></a></li>
-								</c:if>
-							</c:forEach>
-							<c:if test="${startNum+10<=lastPage}">
-								<li class="page-item"><a class="page-link"
-									href="/board/listPage?genre=${genre}&currentPage=${startNum+10}">다음</a>
-								</li>
-							</c:if>
-						</ul>
-						
-						
-					</div>
-
-					<br>
-				</div>
-			</div>
-		</c:if>
-
-
+		
 
 		<!-- 글 장르가 정해지지 않은 경우 -->
 

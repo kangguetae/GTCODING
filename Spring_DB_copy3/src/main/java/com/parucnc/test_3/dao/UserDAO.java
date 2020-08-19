@@ -11,4 +11,6 @@ public interface UserDAO {
 	public UserVO remID(int uNum) throws Exception;
 	public List userList() throws Exception;
 	public void empowerment(String id) throws Exception;
+	public void deprivation(String id) throws Exception;
+	public List managerList() throws Exception;
 }
