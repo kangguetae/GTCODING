@@ -29,8 +29,23 @@ public class GenreDAOImpl implements GenreDAO{
 	}
 	
 	@Override
+	public List selectedGenreList() throws Exception{
+		return sql.selectList(namespace+".selectedGenreList");
+	}
+	
+	@Override
 	public void deleteGenre(String genreEng) throws Exception{
 		sql.delete(namespace+".deleteGenre", genreEng);
+	}
+	
+	@Override
+	public void genreSelectT(String [] checkList) throws Exception{
+		sql.update(namespace+".genreSelectT", checkList);
+	}
+	
+	@Override
+	public void genreSelectF(String [] checkList) throws Exception{
+		sql.update(namespace+".genreSelectF", checkList);
 	}
 	
 }

@@ -105,4 +105,17 @@ public class ManagementController {
 		
 		return "redirect:/management/adminPage";
 	}
+	
+	@RequestMapping(value="/selectGenre", method=RequestMethod.POST)
+	public String postSelectGenre(HttpServletRequest request) throws Exception{
+		String [] checkList = request.getParameterValues("genres");
+		for(String i : checkList) {
+			System.out.println(i);	
+		}
+		genreService.genreSelectT(checkList);
+		genreService.genreSelectF(checkList);
+		
+		
+		return "redirect:/management/adminPage";
+	}
 }

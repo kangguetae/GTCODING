@@ -17,11 +17,48 @@
 	<select id="genreList" resultType="com.parucnc.test_3.domain.GenreVO">
 		select *
 		from genre
-		
-		<!-- where selected = true(1) 이거 하면 장르설정가능할듯 -->
 	</select>
 	
+	<select id="selectedGenreList" resultType="com.parucnc.test_3.domain.GenreVO">
+		select *
+		from genre
+		where selected = 1
+	</select>
 	
+	<update id="genreSelectT">
+		update genre
+		set 
+		selected = 1
+		<where>
+			genreEng in
+			<foreach collection="array" item="genreEng" open="(" close=")" separator=",">
+				#{genreEng}
+			</foreach>
+		</where>
+	</update>
+	
+	<update id="genreSelectF">
+		update genre
+		set 
+		selected = 0
+		<where>
+			genreEng not in
+			<foreach collection="array" item="genreEng" open="(" close=")" separator=",">
+				#{genreEng}
+			</foreach>
+		</where>
+	</update>
+	
+	<select id="count2" resultType="int" >
+		select count(bno)
+		from board
+		<where>
+			genre in
+			<foreach collection="array" item="genre" open="(" close=")" separator=",">	
+				#{genre}
+			</foreach>
+		</where>
+	</select>
 	
 	
 </mapper>

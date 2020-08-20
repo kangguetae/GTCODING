@@ -4,7 +4,14 @@ public class GenreVO {
 	private int gno;
 	private String genreEng;
 	private String genreKor;
+	private int selected;
 	
+	public int getSelected() {
+		return selected;
+	}
+	public void setSelected(int selected) {
+		this.selected = selected;
+	}
 	public int getGno() {
 		return gno;
 	}

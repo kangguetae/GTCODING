@@ -28,7 +28,22 @@ public class GenreServiceImpl implements GenreService{
 	}
 	
 	@Override
+	public List selectedGenreList() throws Exception{
+		return dao.selectedGenreList();
+	}
+	
+	@Override
 	public void deleteGenre(String genreEng) throws Exception{
 		dao.deleteGenre(genreEng);
+	}
+	
+	@Override
+	public void genreSelectT(String [] checkList) throws Exception{
+		dao.genreSelectT(checkList);
+	}
+	
+	@Override
+	public void genreSelectF(String [] checkList) throws Exception{
+		dao.genreSelectF(checkList);
 	}
 }

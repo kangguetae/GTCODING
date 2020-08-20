@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
 <style>
 	button{
 		align: center;
@@ -15,6 +16,7 @@
 
 </head>
 <body>
+
 	<div class="container">
 		<h3>adminPage</h3>
 		<div id="nav">
@@ -24,17 +26,37 @@
 		
 		<c:if test="${status ge 1}">
 			매니저부터
-			<form method="POST" action="addGenre"> 
+			<form method="POST" action="addGenre" onsubmit="return confirm('정말 추가하시겠습니까?')"> 
 				<div class="form-group">
 					장르(영):<input class="form-control" size="10" maxlength="20" type="text" name="genreEng" />
-					장르(한):<input class="form-control" size="10" maxlength="3"  type="text" name="genreKor" />
+					장르(한):<input class="form-control" size="10" maxlength="4"  type="text" name="genreKor" />
 					<button class="btn btn-primary">장르추가</button>
 				</div>
 			</form>
 			
 			<br>
 			
-			<form method="POST" action="deleteGenre">
+			<form method="POST" action="selectGenre">
+			표시할 장르 선택<br>
+				<c:forEach var="list" items="${genreList}">
+					<%-- <c:if test="${list.genreEng ne 'announcement'}"> --%>
+						<c:if test="${list.selected eq 1}">
+							<label><input type="checkbox" name="genres" value="${list.genreEng}" checked/>${list.genreKor}</label>
+						</c:if>
+						<c:if test="${list.selected ne 1}">
+							<label><input type="checkbox" name="genres" value="${list.genreEng}"/>${list.genreKor}</label>
+						</c:if>
+					<%-- </c:if> --%>
+				</c:forEach>
+				<br>
+				<button class="btn btn-primary">결정</button>
+					<!-- <input type="reset" value="초기화"/> -->
+			</form>
+			
+			
+			
+			<br><br><br>
+			<form method="POST" action="deleteGenre" onsubmit="return confirm('정말 삭제하시겠습니까?')">
 				<select class="form-control" name="genreDelete" size="1">
 					<c:forEach var="list" items="${genreList}">
 						<c:if test="${list.genreEng ne 'announcement'}">
@@ -42,13 +64,13 @@
 						</c:if>
 					</c:forEach>
 				</select>
-				<button class="btn btn-primary">장르삭제</button>
+				<button id="g" class="btn btn-danger">장르삭제</button>
 			</form>
 			
 			<br><br>
 			<c:if test="${status ge 2}">
 				관리자부터
-				<form method="POST" action="authority">
+				<form method="POST" action="authority" onsubmit="return confirm('정말 등록하시겠습니까?')">
 					<select class="form-control" name="user" size="1">
 						<c:forEach var="user" items="${list}">
 							<option value="${user}">${user}</option>
@@ -59,7 +81,7 @@
 				
 				<br>
 				
-				<form method="POST" action="deprivation">
+				<form method="POST" action="deprivation"  onsubmit="return confirm('정말 진행하시겠습니까?')">
 					<select class="form-control" name="manager" size="1">
 						<c:forEach var="manager" items="${managerList}">
 							<option value="${manager}">${manager}</option>

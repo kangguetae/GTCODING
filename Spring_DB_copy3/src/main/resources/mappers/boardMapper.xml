@@ -107,7 +107,7 @@
 		delete from board
 		where genre = #{genre}
 	</delete>
-	
+	<!-- select count(*) from board where genre in (select genreEng from genre where selected = 1); -->
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
 		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt,
@@ -117,11 +117,14 @@
 		on b.bno = comm.bno
 		<if test='genres != null'>
 			<where>
-			genre in
+				genre in
 				<foreach collection="genres" item="genre" open="(" close=")" separator=",">	
 					#{genre}
 				</foreach>
 			</where>
+		</if>
+		<if test='genres == null'>
+			where genre in (select genreEng from genre where selected = 1)
 		</if>
 		<!-- where genre = #{listGenre} -->
 		order by b.bno desc
@@ -129,20 +132,17 @@
 	</select> 
 
 
-
-
-
-
-
  	 <select id="count" resultType="int" parameterType="HashMap">
 		select count(bno)
 		from board
 		<where>
 			<if test='listGenre != null'>
-				genre = #{listGenre}
+				genre = #{listGenre} and
 			</if>
+			 genre in (select genreEng from genre where selected = 1)
 		</where>
 	</select> 
+	
 	<select id="count2" resultType="int" >
 		select count(bno)
 		from board
@@ -151,6 +151,7 @@
 			<foreach collection="array" item="genre" open="(" close=")" separator=",">	
 				#{genre}
 			</foreach>
+			
 		</where>
 	</select>
  

@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.parucnc.test_3.domain.BoardVO;
 import com.parucnc.test_3.domain.CommentVO;
+import com.parucnc.test_3.domain.GenreVO;
 import com.parucnc.test_3.domain.UserVO;
 import com.parucnc.test_3.domain.User_BoardVO;
 import com.parucnc.test_3.domain.fileUploadVO;
@@ -85,7 +86,7 @@ public class BoardController {
 			System.out.println("로그인이 필요한 서비스입니다.");
 			return "redirect:/";
 		}
-		List genreList = genreService.genreList();
+		List genreList = genreService.selectedGenreList();
 		
 		model.addAttribute("genreList", genreList);
 		model.addAttribute("status", status);
@@ -435,9 +436,12 @@ public class BoardController {
 			return "redirect:/board/listPage?currentPage=" + lastPage;
 		}
 		int currPage = pagingList(currentPage, lastPage, model);
+		List selectGenreList = genreService.selectedGenreList();
+		
+		
 		map.put("startNum", currPage);
 		List list = boardService.listPage(map);
-		List genreList = genreService.genreList();
+		List genreList = genreService.selectedGenreList();
 		
 		model.addAttribute("genreList", genreList);
 		model.addAttribute("listPage", list);
