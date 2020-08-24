@@ -20,7 +20,8 @@ public class Interceptor extends HandlerInterceptorAdapter{
 		HttpSession session = request.getSession();
 		UserVO userVO = (UserVO)session.getAttribute("userVO");
 		try {
-			userVO.getId();
+			String status = userVO.getStatus();
+			
 		}
 		catch(Exception e) {
 			response.sendRedirect("/loginError");
@@ -28,7 +29,6 @@ public class Interceptor extends HandlerInterceptorAdapter{
 		
 		return true; //true면 controller로  요청 진행, false면 controller로 진행되지 않고 바로 응답하게 된다.
 	}
-
 	/**
 	 * This implementation is empty.
 	 */
@@ -37,8 +37,6 @@ public class Interceptor extends HandlerInterceptorAdapter{
 			HttpServletRequest request, HttpServletResponse response, 
 			Object handler, ModelAndView modelAndView)
 			throws Exception {
-		
-//		System.out.println("after-----------");
 		
 	}
 }

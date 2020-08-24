@@ -27,7 +27,7 @@ import com.parucnc.test_3.service.UserService;
 /**
  * Handles requests for the application home page.
  */
-@Controller
+@Controller	
 public class HomeController {
 	public static String userID;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);

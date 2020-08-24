@@ -4,7 +4,14 @@ public class CommentVO {
 	private int bno;
 	private String comm;
 	private int cno;
+	private String writer;
 	
+	public String getWriter() {
+		return writer;
+	}
+	public void setWriter(String writer) {
+		this.writer = writer;
+	}
 	public int getCno() {
 		return cno;
 	}

@@ -18,5 +18,8 @@
 				<a class="page-link" href="/management/adminPage">관리자 페이지</a>
 			</li>
 		</c:if>
+		<!-- <li class="page-item">
+			<a class="page-link" href="/board/listPage?currentPage=1">마이페이지</a>
+		</li> -->
 	</ul>
 	

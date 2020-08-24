@@ -5,8 +5,8 @@
 <mapper namespace="com.comment.mappers.comment">
 
 	<select id="showComment" resultType="com.parucnc.test_3.domain.CommentVO">
-		select
-		comm, cno
+		select 
+		comm, cno, writer
 		from comment
 		where bno = #{bno}
 		<!-- order by bno desc -->
@@ -15,8 +15,8 @@
 	
 	<insert id="insert" parameterType="com.parucnc.test_3.domain.CommentVO">
 		insert into
-		comment (bno, comm)
-		values(#{bno}, #{comm})
+		comment (bno, comm, writer)
+		values(#{bno}, #{comm}, #{writer})
 	</insert>
 
 	<select id="commentCount" resultType="com.parucnc.test_3.domain.CommentVO" >
@@ -27,14 +27,17 @@
 		<!-- where comment.bno = 271335 -->
 	</select>
 	
-	 <!-- <update id="">
-		update board
-		set commCnt = 
-		
-		
-		
-		
-	</update> -->
+	<delete id="deleteComment">
+		delete from comment
+		where cno = #{cno}
+	
+	</delete>
+	
+	<update id="modifyComment" parameterType="HashMap">
+		update comment
+		set comm = #{comm}
+		where cno = #{cno}
+	</update>
 	
 	<update id="viewUpdate" parameterType="int">
 		update board

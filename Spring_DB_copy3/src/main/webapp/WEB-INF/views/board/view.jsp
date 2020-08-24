@@ -16,13 +16,78 @@
 		"bno" : '${bno}',
 		"isLike" : "0"
 	};
-
 	var likeBtnData = {
 		"uno" : '${check.uno}',
 		"bno" : '${bno}',
 		"isLike" : "1"
 	};
-	$(document).ready(function() {
+	
+	
+	$(document).ready(function(){
+
+		// 댓글 삭제	
+		$(".replyUpdate.btn.btn-danger.btn-xs").click(function() {
+
+			if(confirm("정말 삭제하시겠습니까?")){
+				var commentDeleteData = {
+					"cno" : $(this).val()
+					};
+				$(this).parent().remove();
+				$.ajax({
+					 type : "POST"
+					,url : "/board/commentDelete"
+					,data : commentDeleteData
+					
+				});
+			}
+		});
+		
+		// 댓글 수정시작
+		$(".replyUpdate.btn.btn-warning.btn-xs").click(function() {
+			$(this).siblings(".comm1").css("display" , "none");
+			$(this).siblings(".comm2").css("display" , "");
+
+			$(this).css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-danger.btn-xs").css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-success.btn-xs").css("display", "");
+			$(this).siblings(".replyUpdate.btn.btn-info.btn-xs").css("display", "");
+		});
+
+		// 댓글 수정 취소
+		$(".replyUpdate.btn.btn-info.btn-xs").click(function() {
+			$(this).siblings(".comm1").css("display" , "");
+			$(this).siblings(".comm2").css("display" , "none");
+
+			$(this).css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-success.btn-xs").css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-warning.btn-xs").css("display", "");
+			$(this).siblings(".replyUpdate.btn.btn-danger.btn-xs").css("display", "");
+		});
+
+		//댓글 수정 확인
+		$(".replyUpdate.btn.btn-success.btn-xs").click(function() {
+			var content = $(this).siblings(".comm2").children(".modifyComment").val();
+			$(this).siblings(".comm1").css("display" , "").text(content);
+			$(this).siblings(".comm2").css("display" , "none");
+
+			$(this).css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-info.btn-xs").css("display", "none");
+			$(this).siblings(".replyUpdate.btn.btn-warning.btn-xs").css("display", "");
+			$(this).siblings(".replyUpdate.btn.btn-danger.btn-xs").css("display", ""); 
+			var commentModifyData = {
+					"cno" : $(this).val(),
+					"content" : content
+			}; 
+			if(confirm("수정하시겠습니까?")){
+				$.ajax({
+					 type : "POST"
+					,url : "/board/commentModify"
+					,data : commentModifyData
+				});
+			}
+		});
+
+		//좋아요, 싫어요 버튼
 		$("#like").click(function() {
 			$.ajax({
 				type : "POST",
@@ -32,7 +97,6 @@
 
 					var content = ": [" + result + "]";
 					$("#cntLike").text(content);
-					/* "["+1+"]" */
 				},
 				error : function() {
 					alert("이미 참여");
@@ -45,7 +109,7 @@
 				type : "POST",
 				url : "/board/likeOrDislike",
 				data : dislikeBtnData,
-				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
+				success : function(result) { 
 
 					var content = ": [" + result + "]";
 					$("#cntDislike").text(content);
@@ -56,8 +120,8 @@
 			});
 		});
 
+		//첨부파일 이미지 표출
 		var t;
-
 		$(".attachment").mouseenter(function(){
 			t = $(this).text();
 			var fno = $(this).attr("id");
@@ -71,58 +135,26 @@
 			//$(this).next().hide();
 			$(this).next().css("visibility", "hidden")
 		});
-		
-		
+
+
+
 	});
-
-
-	
-	window.onload = function() {
-		
-		var modify = document.getElementsByClassName("modifyBtn");
-		var cancelBtn = document
-				.getElementsByClassName("commentModify_cancelBtn");
-		var deleteBtn = document.getElementsByClassName("deleteBtn");
-
-		for (var i = 0; i < modify.length; i++) {
-			modify[i].addEventListener("click", function() {
-				console.log("수정버튼");
-				$(this).parent().css("display", "none");
-				$(this).parent().next().css("display", "block");
-				console.log($(this).parent().parent().attr("id"));
-				console.log($(this).parent().prev().html());
-			});
-		}
-
-		for (var i = 0; i < cancelBtn.length; i++) {
-			cancelBtn[i].addEventListener("click", function() {
-				console.log("취소버튼");
-				$(this).parent().parent().prev().css("display", "block");
-				$(this).parent().parent().css("display", "none");
-			});
-		}
-
-		for (var i = 0; i < deleteBtn.length; i++) {
-			deleteBtn[i].addEventListener("click", function() {
-				console.log("삭제버튼");
-			});
-		}
-	}
 
 	function login_require() {
 		alert("로그인이 필요한 서비스입니다.");
 	}
 </script>
-<style>
+<!-- <style>
 button.like-button, button.dislike-button {
 	background-color: white;
 }
-</style>
+</style> -->
 </head>
 
 <body>
 
 	<div class="container">
+	
 		<h1>view</h1>
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
@@ -174,29 +206,19 @@ button.like-button, button.dislike-button {
 		<br>
 		<c:if test="${userId == view.writer or status>=1}">
 			<br>
-			<a class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
-				삭제</a>
-			<!-- 페이지 이동X 해당 페이지로의 요청 -->
 			<a class="btn btn-warning" href="/board/modify/?bno=${view.bno}">게시물
 				수정</a>
-			<!-- <button id="aaa">aaa</button> -->
+			<a onclick="return confirm('정말 삭제하시겠습니까?')" class="btn btn-danger" href="/board/delete/?bno=${view.bno}">게시물
+				삭제</a>
+			<!-- 페이지 이동X 해당 페이지로의 요청 -->
+			
 		</c:if>
-
-		<br> <br> <label>댓글</label> <br> <input type="text"
-			style="display: none;">
-		<c:forEach var="commentList" items="${comment}">
-			<div class="form-group" id="${commentList.cno}">
-				<div>
-					<c:out value="${commentList.comm}" escapeXml="true" />
-				</div>
-			</div>
-
-		</c:forEach>
-
+<br> <br>
 
 		<form method="POST">
 			<c:if test="${isLogin}">
 				<div class="form-group">
+					<input type="hidden" name="writer" value="${check.id}" />
 					<textarea class="form-control" rows="2" cols="40" name="comm"
 						placeholder="댓글"></textarea>
 					<input type="hidden" name="bno" value="${view.bno}" /> <input
@@ -209,6 +231,36 @@ button.like-button, button.dislike-button {
 				<button onclick="alert('로그인이 필요한 서비스입니다.')">댓글작성</button>
 			</c:if>
 		</form>
+		
+		<!-- <h4><b>댓글</b></h4> -->
+		<div class="col-xs-12">
+			<c:forEach var="comment" items="${commentList}">
+				<div>	
+					<span class="glyphicon glyphicon-user"></span>
+					<b>${comment.writer}</b>
+					<br>
+					<div class="comm1" style="display:"><c:out value="${comment.comm}" escapeXml="true" /></div>
+					<div class="comm2" style="display:none">
+						<textarea class="modifyComment" cols="45">${comment.comm}</textarea>
+					</div>
+					
+					
+					
+					
+					<c:if test="${comment.writer eq check.id or check.status eq 'admin' or check.status eq 'manager'}">
+						<c:if test="${check.status ne 'manager' or comment.writer ne 'admin'}">
+							<button value="${comment.cno}" style="float: right ;" type="button" class="replyUpdate btn btn-danger btn-xs">삭제</button>				
+							<button  style="float: right;" type="button" class="replyUpdate btn btn-warning btn-xs">수정</button>
+							<button value="${comment.cno}" class="replyUpdate btn btn-success btn-xs" style="display:none; float:right;" >수정</button>
+							<button class="replyUpdate btn btn-info btn-xs" style="display:none; float:right;">취소</button>
+						</c:if>
+					</c:if>
+					<br>
+					<hr>
+				</div>
+			</c:forEach> <!-- 관리자나 매니저면 모두 삭제가능 / 아이디랑 댓글작성자가 같으면 가능         -->
+		</div>
+		
 	</div>
 </body>
 </html>

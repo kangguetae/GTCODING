@@ -36,12 +36,11 @@ import com.parucnc.test_3.domain.UserVO;
 import com.parucnc.test_3.domain.User_BoardVO;
 import com.parucnc.test_3.domain.fileUploadVO;
 import com.parucnc.test_3.service.BoardServiceImpl;
+import com.parucnc.test_3.service.CommentService;
 import com.parucnc.test_3.service.CommentServiceImpl;
 import com.parucnc.test_3.service.GenreServiceImpl;
 import com.parucnc.test_3.service.User_BoardServiceImpl;
 import com.parucnc.test_3.service.fileUploadServiceImpl;
-
-//import jdk.incubator.jpackage.internal.IOUtils;
 
 @Controller
 @RequestMapping("/board/*")
@@ -64,6 +63,9 @@ public class BoardController {
 
 	// 댓글 기능 추가 (로그인한사람이름으로) 예제x 시간되면 검색기능 ---- 댓글에도 페이징 (정말 시간 남으면)
 
+	
+	
+	
 	// 목록 표시 (그냥 전체 게시글 나열)
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String getList(Model model, BoardVO vo) throws Exception {
@@ -152,11 +154,9 @@ public class BoardController {
 	}
 
 	// 마우스 오버되면 이미지 불러오는곳 --> 데이터 남용
-
 	@RequestMapping(value = "/getImage", method = RequestMethod.GET)
 	public void getImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		response.setContentType("application/jpeg");
-
 		int fno = Integer.parseInt(request.getParameter("filenumber"));
 		fileUploadVO vo = fileUploadService.getFileInfo(fno);
 
@@ -181,11 +181,8 @@ public class BoardController {
 		if ((UserVO) session.getAttribute("userVO") != null) {
 			login = true;
 		}
-
 		model.addAttribute("isLogin", login);
-
 		id = getId(session);
-
 		BoardVO vo;
 		try {
 			if (bno > Integer.MAX_VALUE) {
@@ -195,6 +192,7 @@ public class BoardController {
 			vo = boardService.view(bno);
 			vo.getContent();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "redirect:/board/noSuchPage";
 		}
 
@@ -206,8 +204,6 @@ public class BoardController {
 		List<fileUploadVO> list = new ArrayList<fileUploadVO>();
 		list = fileUploadService.fileFind(map);
 
-//		System.out.println(list.get(0).getPath());
-//		list.get(0).getChangedName();
 		model.addAttribute("fileList", list);
 
 		File f = new File(filePath);
@@ -269,7 +265,7 @@ public class BoardController {
 
 		}
 		List comment = commService.showComment(commVo);
-		model.addAttribute("comment", comment);
+		model.addAttribute("commentList", comment); // cccc
 		return "board/view";
 	}
 
@@ -338,23 +334,34 @@ public class BoardController {
 			e.printStackTrace();
 			return null;
 		}
-
 		return saveName;
 	}
 
 	// 게시물 삭제
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public String getDelete(@RequestParam("bno") int bno, Model model) throws Exception {
+	public String getDelete(HttpSession session, @RequestParam("bno") int bno, Model model) throws Exception {
+		BoardVO vo = boardService.view(bno);
+		UserVO userVO = (UserVO)session.getAttribute("userVO");
+
+		if(!userVO.getStatus().equals("admin") && !vo.getWriter().equals(userVO.getId())) {
+			return "redirect:/board/listPage?invalidAccess=true";
+		}
 		boardService.delete(bno);
 		return "redirect:/board/listPage";
 	}
 
+	
 	// 게시물 수정창으로 이동
 	@RequestMapping(value = "/modify", method = RequestMethod.GET)
-	public String getModify(@RequestParam("bno") int bno, Model model) throws Exception {
+	public String getModify(HttpSession session, @RequestParam("bno") int bno, Model model) throws Exception {
 		model.addAttribute("userID", homeCon.userID);
+		
 		BoardVO vo = boardService.view(bno);
+		UserVO userVO = (UserVO)session.getAttribute("userVO");
 
+		if(!userVO.getStatus().equals("admin") && !vo.getWriter().equals(userVO.getId())) {
+			return "redirect:/board/listPage?invalidAccess=true";
+		}
 		model.addAttribute("list", vo);
 		return "board/modify";
 	}
@@ -381,6 +388,25 @@ public class BoardController {
 		return id;
 	}
 
+	
+	@RequestMapping(value = "commentDelete", method = RequestMethod.POST)
+	@ResponseBody
+	public void postCommentDelete(@RequestParam Map<String, String> param) throws Exception{
+		String cno = param.get("cno");
+		commService.commentDelete(cno);
+	}
+	
+	@RequestMapping(value = "commentModify", method = RequestMethod.POST)
+	@ResponseBody
+	public void postCommentModify(@RequestParam Map<String, String> param) throws Exception{
+		int cno = Integer.parseInt(param.get("cno"));
+		String content = param.get("content");
+		Map map = new HashMap();
+		map.put("cno", cno);
+		map.put("comm", content);
+		commService.commentModify(map);
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/chooseGenre", method = RequestMethod.POST)
 	public Object postChooseGenre(Model model, @RequestParam Map<String, String> param) throws Exception {
@@ -480,6 +506,10 @@ public class BoardController {
 		List list = boardService.search(map);
 		int searchCount = boardService.searchCount(map); // 검색한 내용물의 개수
 		search2(searchCount, model, req, currentPage);
+		List genreList = genreService.selectedGenreList();
+		
+		model.addAttribute("genreList", genreList);
+		
 		model.addAttribute("listPage", list);
 		return "board/search";
 	}

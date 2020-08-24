@@ -132,7 +132,7 @@
 	</select> 
 
 
- 	 <select id="count" resultType="int" parameterType="HashMap">
+ 	<select id="count" resultType="int" parameterType="HashMap">
 		select count(bno)
 		from board
 		<where>

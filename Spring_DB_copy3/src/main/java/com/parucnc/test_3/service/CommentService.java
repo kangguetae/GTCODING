@@ -9,4 +9,6 @@ public interface CommentService {
 	public void insert(CommentVO vo) throws Exception;
 	public List showComment(CommentVO vo) throws Exception;
 	public List commentCount(CommentVO vo) throws Exception;
+	public void commentDelete(String cno) throws Exception;
+	public void commentModify(Map map) throws Exception;
 }

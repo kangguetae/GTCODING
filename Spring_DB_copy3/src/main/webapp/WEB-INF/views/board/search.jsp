@@ -16,6 +16,15 @@
 			<%@ include file="../include/nav.jsp"%>
 		</div>
 		<br>
+		<div>
+		<button class="btn" id="total"><a href="/board/listPage">돌아가기</button></a>
+		<%-- 	<c:forEach var="list" items="${genreList}">
+					<button class="btn btn-light" id="${list.genreEng}">${list.genreKor}</button>
+			</c:forEach> --%>	
+		</div> 
+		
+		
+		
 		<%-- <div id="nav_genre">
 		<%@ include file="../include/nav_genre.jsp"%>
 	</div> --%>

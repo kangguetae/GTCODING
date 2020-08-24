@@ -36,7 +36,7 @@
 			
 			<br>
 			
-			<form method="POST" action="selectGenre">
+			<form method="POST" action="selectGenre" onsubmit="return confirm('재밌겠네 진행해봐')">
 			표시할 장르 선택<br>
 				<c:forEach var="list" items="${genreList}">
 					<%-- <c:if test="${list.genreEng ne 'announcement'}"> --%>
@@ -100,6 +100,12 @@
 	<c:if test="${!empty param.genreNull}">
 		<script>
 			alert("추가할 장르를 전부 입력해주세요")
+		</script>
+	</c:if>
+	
+	<c:if test="${!empty param.nullSelect}">
+		<script>
+			alert("1개 이상의 장르를 선택해주세요.")
 		</script>
 	</c:if>
 	

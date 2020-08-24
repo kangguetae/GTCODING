@@ -88,9 +88,7 @@ public class ManagementController {
 				||vo.getGenreKor()==null||vo.getGenreKor().equals(null)) {
 			return "redirect:/management/adminPage?genreNull=true";
 		}
-			
 		
-			
 		genreService.addGenre(vo);
 		return "redirect:/management/adminPage";
 	}
@@ -98,10 +96,7 @@ public class ManagementController {
 	@RequestMapping(value="/deleteGenre", method = RequestMethod.POST)
 	public String postDeleteGenre(HttpServletRequest request, GenreVO vo) throws Exception{
 		String genre = request.getParameter("genreDelete");
-		System.out.println(genre);
-//		System.out.println(vo.getGenreEng());
 		genreService.deleteGenre(genre);
-//		boardService.delChoosedGenreBoard(genre);
 		
 		return "redirect:/management/adminPage";
 	}
@@ -109,12 +104,11 @@ public class ManagementController {
 	@RequestMapping(value="/selectGenre", method=RequestMethod.POST)
 	public String postSelectGenre(HttpServletRequest request) throws Exception{
 		String [] checkList = request.getParameterValues("genres");
-		for(String i : checkList) {
-			System.out.println(i);	
+		if(checkList == null) {
+			return "redirect:/management/adminPage?nullSelect=true";
 		}
 		genreService.genreSelectT(checkList);
 		genreService.genreSelectF(checkList);
-		
 		
 		return "redirect:/management/adminPage";
 	}

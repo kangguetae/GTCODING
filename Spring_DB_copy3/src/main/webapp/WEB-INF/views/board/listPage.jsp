@@ -265,7 +265,6 @@ function func(e) {
 							</c:if>
 
 							<c:forEach var="page" begin="${startNum}" end="${endNum}">
-
 								<c:if test="${page ne currentPage}">
 									<li class="page-item"><a class="page-link"
 										href="/board/listPage?currentPage=${page}">${page}</a></li>
@@ -305,5 +304,13 @@ function func(e) {
 		</div>
 		<br>
 	</div>
+	
+	<c:if test="${!empty param.invalidAccess}">
+		<script>
+			alert("잘못된 접근입니다.");
+		</script>
+	</c:if>
+	
+	
 </body>
 </html>

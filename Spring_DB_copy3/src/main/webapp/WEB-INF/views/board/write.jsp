@@ -14,6 +14,7 @@
 	<div id="nav">
 		<%@ include file="../include/nav.jsp"%>
 	</div>
+	
 
 	<form method="post" enctype="multipart/form-data">
 		<div class="form-group">
