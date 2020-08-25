@@ -6,7 +6,7 @@
 
 	<select id="showComment" resultType="com.parucnc.test_3.domain.CommentVO">
 		select 
-		comm, cno, writer
+		comm, cno, writer, secret
 		from comment
 		where bno = #{bno}
 		<!-- order by bno desc -->
@@ -15,8 +15,8 @@
 	
 	<insert id="insert" parameterType="com.parucnc.test_3.domain.CommentVO">
 		insert into
-		comment (bno, comm, writer)
-		values(#{bno}, #{comm}, #{writer})
+		comment (bno, comm, writer, secret)
+		values(#{bno}, #{comm}, #{writer}, #{secret})
 	</insert>
 
 	<select id="commentCount" resultType="com.parucnc.test_3.domain.CommentVO" >

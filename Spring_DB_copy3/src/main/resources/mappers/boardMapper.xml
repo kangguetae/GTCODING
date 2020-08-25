@@ -110,7 +110,7 @@
 	<!-- select count(*) from board where genre in (select genreEng from genre where selected = 1); -->
 	<select id="listPage"
 		resultType="com.parucnc.test_3.domain.BoardVO" parameterType="HashMap">
-		select b.bno, b.title, b.regDate, b.writer, b.viewCnt, ifnull(comm.c, 0) as commCnt,
+		select b.bno, b.title, b.regDate, b.writer, b.genre, b.viewCnt, ifnull(comm.c, 0) as commCnt,
 		 (select count(if(isLike = 1, isLike , null)) from user_board where bno = b.bno) as recommCnt
 		from board as b
 		left join (select count(*) as c, bno from comment group by bno) as comm
@@ -187,7 +187,8 @@
 	<select id="searchCount" resultType="int">
 		select
 		count(bno)
-		from board
+		from board 
+		<!-- 대댓글 비밀글 ?? 차트 통계 adminpage 사용자페이지 설문조사-통계자료 엑셀 다운로드? 와ㅅㅂ-->
 		<where>
 			<if test='search == "title"'>
 				title like concat('%',#{contain},'%')

@@ -45,7 +45,6 @@ function func(e) {
 		page = 1;	
 	}
 
-	
 	if(genre !== undefined){	 // 장르선택하면 저장
 		var fst = genre;
 		var next = genre+"#";
@@ -144,6 +143,9 @@ function func(e) {
 					 text:v.regDate
 				}));
 				$(td).append($("<td/>",{
+					 text:v.genre
+				}));
+				$(td).append($("<td/>",{
 					 text:v.viewCnt
 				}));
 				$(td).append($("<td/>",{
@@ -225,6 +227,7 @@ function func(e) {
 					<th>글쓴이</th>
 					<th>제목</th>
 					<th>날짜</th>
+					<th>장르</th>
 					<th>조회수</th>
 					<th>추천수</th>
 				</tr>
@@ -242,6 +245,7 @@ function func(e) {
 							</a>
 						</td>
 						<td>${list.regDate}</td>
+						<td>${list.genre}</td>
 						<td>${list.viewCnt}</td>
 						<td>${list.recommCnt}</td>
 					</tr>

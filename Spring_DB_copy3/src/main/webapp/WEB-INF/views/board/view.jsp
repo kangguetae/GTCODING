@@ -22,9 +22,7 @@
 		"isLike" : "1"
 	};
 	
-	
 	$(document).ready(function(){
-
 		// 댓글 삭제	
 		$(".replyUpdate.btn.btn-danger.btn-xs").click(function() {
 
@@ -94,7 +92,6 @@
 				url : "/board/likeOrDislike",
 				data : likeBtnData, //다수의 데이터를 받아와야 한다면 객체를 데이터로 받아온다.
 				success : function(result) { // result --> 접근하는 controller가 return하는 값을 result로 받아온다. 
-
 					var content = ": [" + result + "]";
 					$("#cntLike").text(content);
 				},
@@ -110,7 +107,6 @@
 				url : "/board/likeOrDislike",
 				data : dislikeBtnData,
 				success : function(result) { 
-
 					var content = ": [" + result + "]";
 					$("#cntDislike").text(content);
 				},
@@ -125,19 +121,11 @@
 		$(".attachment").mouseenter(function(){
 			t = $(this).text();
 			var fno = $(this).attr("id");
-			
-			//$(this).children().css("display", "inline");
 			$(this).next().css("visibility", "visible");
-			//$(this).next().show();
-			//$(this).after("<img style='position:absolute;' width='200' height='130' src='/board/getImage?filenumber="+fno+"'/>");
 		});
 		$(".attachment").mouseleave(function(){
-			//$(this).next().hide();
 			$(this).next().css("visibility", "hidden")
 		});
-
-
-
 	});
 
 	function login_require() {
@@ -152,9 +140,7 @@ button.like-button, button.dislike-button {
 </head>
 
 <body>
-
 	<div class="container">
-	
 		<h1>view</h1>
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
@@ -163,12 +149,10 @@ button.like-button, button.dislike-button {
 			<label>title </label>
 			<div class="form-control"><c:out value="${view.title}" escapeXml="true"/></div>
 		</div>
-
 		<div class="form-group">
 			<label> writer </label>
 			<div class="form-control">${view.writer}</div>
 		</div>
-
 		<div class="form-group">
 			<label> content </label>
 			<textarea class="form-control col-sm-12" rows="5" readOnly>${view.content}</textarea>
@@ -213,12 +197,13 @@ button.like-button, button.dislike-button {
 			<!-- 페이지 이동X 해당 페이지로의 요청 -->
 			
 		</c:if>
-<br> <br>
+		<br> <br>
 
 		<form method="POST">
 			<c:if test="${isLogin}">
 				<div class="form-group">
 					<input type="hidden" name="writer" value="${check.id}" />
+					<label><input type="checkbox" name="isSecret" value="1"/>비밀댓글</label>
 					<textarea class="form-control" rows="2" cols="40" name="comm"
 						placeholder="댓글"></textarea>
 					<input type="hidden" name="bno" value="${view.bno}" /> <input
@@ -232,20 +217,30 @@ button.like-button, button.dislike-button {
 			</c:if>
 		</form>
 		
-		<!-- <h4><b>댓글</b></h4> -->
 		<div class="col-xs-12">
 			<c:forEach var="comment" items="${commentList}">
 				<div>	
 					<span class="glyphicon glyphicon-user"></span>
 					<b>${comment.writer}</b>
 					<br>
-					<div class="comm1" style="display:"><c:out value="${comment.comm}" escapeXml="true" /></div>
+					<div class="comm1" style="display:">
+						<c:if test="${comment.secret eq 0 }">
+							<c:out value="${comment.comm}" escapeXml="true" />
+						</c:if>
+						<c:if test="${comment.secret eq 1}">
+							<c:choose>
+								<c:when test="${comment.writer eq check.id or check.status eq 'admin' or check.status eq 'manager'}">
+									<c:out value="${comment.comm}" escapeXml="true" />
+								</c:when>
+								<c:otherwise>
+									<p style="background-color:lightgrey">비밀 댓글입니다.</p>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
+					</div>
 					<div class="comm2" style="display:none">
 						<textarea class="modifyComment" cols="45">${comment.comm}</textarea>
 					</div>
-					
-					
-					
 					
 					<c:if test="${comment.writer eq check.id or check.status eq 'admin' or check.status eq 'manager'}">
 						<c:if test="${check.status ne 'manager' or comment.writer ne 'admin'}">
@@ -258,9 +253,9 @@ button.like-button, button.dislike-button {
 					<br>
 					<hr>
 				</div>
-			</c:forEach> <!-- 관리자나 매니저면 모두 삭제가능 / 아이디랑 댓글작성자가 같으면 가능         -->
+			</c:forEach> 
 		</div>
-		
 	</div>
+	<br><br>
 </body>
 </html>

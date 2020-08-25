@@ -53,4 +53,9 @@ public class UserController {
 		return "home";
 	}
 	
+	@RequestMapping(value="/myPage", method=RequestMethod.GET)
+	public String getMyPage() throws Exception{
+		return "/user/myPage";
+	}
+	
 }

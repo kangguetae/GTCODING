@@ -37,6 +37,9 @@ public class Interceptor extends HandlerInterceptorAdapter{
 			HttpServletRequest request, HttpServletResponse response, 
 			Object handler, ModelAndView modelAndView)
 			throws Exception {
+//		HttpSession session = request.getSession();
+//		UserVO userVO = (UserVO)session.getAttribute("userVO");
+		
 		
 	}
 }

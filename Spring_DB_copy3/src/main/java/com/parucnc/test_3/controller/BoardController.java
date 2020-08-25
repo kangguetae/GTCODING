@@ -271,7 +271,10 @@ public class BoardController {
 
 	// 댓글작성
 	@RequestMapping(value = "/view", method = RequestMethod.POST)
-	public String postView(@RequestParam("bno") int bno, CommentVO vo, Model model) throws Exception {
+	public String postView(HttpServletRequest request, @RequestParam("bno") int bno, CommentVO vo, Model model) throws Exception {
+		String isSecret = request.getParameter("isSecret");
+		int secret = isSecret == null ? 0 : 1;  
+		vo.setSecret(secret);
 		commService.insert(vo);
 		return "redirect:/board/view/?bno=" + bno;
 	}
@@ -387,7 +390,6 @@ public class BoardController {
 		}
 		return id;
 	}
-
 	
 	@RequestMapping(value = "commentDelete", method = RequestMethod.POST)
 	@ResponseBody

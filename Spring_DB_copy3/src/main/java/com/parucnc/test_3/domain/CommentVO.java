@@ -5,7 +5,14 @@ public class CommentVO {
 	private String comm;
 	private int cno;
 	private String writer;
+	private int secret;
 	
+	public int getSecret() {
+		return secret;
+	}
+	public void setSecret(int secret) {
+		this.secret = secret;
+	}
 	public String getWriter() {
 		return writer;
 	}
