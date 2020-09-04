@@ -14,13 +14,12 @@
 </head>
 <body>
 	<div class="container">
-
+/${TEST}\
 		<h3>마이페이지</h3>
 
 		<div id="nav">
 			<%@ include file="../include/nav.jsp"%>
 		</div>
-		
 	</div>
 </body>
 </html>

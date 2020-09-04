@@ -78,10 +78,6 @@ public class BoardController {
 	@RequestMapping(value = "/write", method = RequestMethod.GET)
 	public String getWrite(Model model, HttpSession session, HttpServletResponse response) throws Exception {
 		String id = null;
-		UserVO uservo = (UserVO)session.getAttribute("userVO");
-		int status = uservo.getStatus().equals("admin")? 2 : 1;
-		status = uservo.getStatus().equals("user")? 0 : status;
-		
 		try {
 			id = getId(session);
 		} catch (Exception e) {
@@ -91,7 +87,6 @@ public class BoardController {
 		List genreList = genreService.selectedGenreList();
 		
 		model.addAttribute("genreList", genreList);
-		model.addAttribute("status", status);
 		model.addAttribute("userID", id);
 
 		return "board/write";
@@ -229,11 +224,7 @@ public class BoardController {
 
 		int countDislike = u_bService.countDislike(testMap);
 		int countLike = u_bService.countLike(testMap);
-		UserVO uservo = (UserVO)session.getAttribute("userVO");
-		int status = uservo.getStatus().equals("admin")? 2 : 1;
-		status = uservo.getStatus().equals("user")? 0 : status;
-		// test
-		model.addAttribute("status", status);
+		
 		model.addAttribute("check", userInfo);
 		model.addAttribute("bno", bno);
 		model.addAttribute("countLike", countLike);
@@ -450,11 +441,6 @@ public class BoardController {
 			@RequestParam(required = false, value = "currentPage", defaultValue = "1") long currentPage,
 			@RequestParam(required = false, value = "genre") String listGenre, Model model, UserVO vo)
 			throws Exception {
-		UserVO uservo = (UserVO)session.getAttribute("userVO");
-		int status = uservo.getStatus().equals("admin")? 2 : 1;
-		status = uservo.getStatus().equals("user")? 0 : status;
-		
-		
 		Map map = new HashMap();
 		map.put("listGenre", listGenre);
 		int count = boardService.count(map);
@@ -475,7 +461,6 @@ public class BoardController {
 		model.addAttribute("listPage", list);
 		model.addAttribute("genre", listGenre);
 		model.addAttribute("isAdmin", isAdmin);
-		model.addAttribute("status", status);
 		return "board/listPage";
 	}
 	

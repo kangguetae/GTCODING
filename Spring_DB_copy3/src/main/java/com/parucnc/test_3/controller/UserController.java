@@ -3,6 +3,7 @@ package com.parucnc.test_3.controller;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +39,7 @@ public class UserController {
 			return "redirect:/user/signUp?shortPwErr=true";
 		}
 		else if(!vo.getId().matches("^[a-zA-Z0-9]*$")||!vo.getPw().matches("^[a-zA-Z0-9]*$")) {
-//			System.out.println(Pattern.matches("^[a-zA-Z]*$",vo.getId()));
-//			System.out.println(vo.getPw().matches("^[a-zA -Z]*$"));
 			return "redirect:/user/signUp?invalidIDErr=true";
-			
 		}
 		try{
 			service.insertUser(vo);
@@ -54,7 +52,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/myPage", method=RequestMethod.GET)
-	public String getMyPage() throws Exception{
+	public String getMyPage(HttpSession session, Model model) throws Exception{
+		
 		return "/user/myPage";
 	}
 	

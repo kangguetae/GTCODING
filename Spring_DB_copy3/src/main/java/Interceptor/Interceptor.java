@@ -17,15 +17,20 @@ public class Interceptor extends HandlerInterceptorAdapter{
 	public boolean preHandle(HttpServletRequest request, 
 			HttpServletResponse response, Object handler)
 		throws Exception {
+		
 		HttpSession session = request.getSession();
 		UserVO userVO = (UserVO)session.getAttribute("userVO");
 		try {
 			String status = userVO.getStatus();
+			int s = userVO.getStatus().equals("admin")? 2 : 1;
 			
+			s = userVO.getStatus().equals("user")? 0 : s;
+			request.setAttribute("status", s);
 		}
 		catch(Exception e) {
 			response.sendRedirect("/loginError");
 		}
+	
 		
 		return true; //true면 controller로  요청 진행, false면 controller로 진행되지 않고 바로 응답하게 된다.
 	}
@@ -37,9 +42,16 @@ public class Interceptor extends HandlerInterceptorAdapter{
 			HttpServletRequest request, HttpServletResponse response, 
 			Object handler, ModelAndView modelAndView)
 			throws Exception {
-//		HttpSession session = request.getSession();
-//		UserVO userVO = (UserVO)session.getAttribute("userVO");
 		
-		
+		try {
+			
+			System.out.println(request.getAttribute("status"));
+			System.out.println("-------");
+			int i = (Integer)request.getAttribute("status");
+			modelAndView.addObject("status", i);
+		}
+		catch(Exception e) {
+			//e.printStackTrace();
+		}
 	}
 }

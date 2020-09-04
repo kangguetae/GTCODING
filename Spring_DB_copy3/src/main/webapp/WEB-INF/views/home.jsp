@@ -50,10 +50,8 @@
 		</div>
 		
 		
-		
-		
 	</div>
-
+	
 	<c:if test="${!empty param.pwErr}">
 		<script>
 			alert("비밀번호X")

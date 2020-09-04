@@ -35,7 +35,12 @@
 					 type : "POST"
 					,url : "/board/commentDelete"
 					,data : commentDeleteData
-					
+					,success : function(){
+						console.log("success");
+					}
+					,error : function(){
+						console.log("error");
+					}
 				});
 			}
 		});
@@ -230,7 +235,9 @@ button.like-button, button.dislike-button {
 						<c:if test="${comment.secret eq 1}">
 							<c:choose>
 								<c:when test="${comment.writer eq check.id or check.status eq 'admin' or check.status eq 'manager'}">
-									<c:out value="${comment.comm}" escapeXml="true" />
+									<p style="background-color:lightgrey">
+										<c:out value="${comment.comm}" escapeXml="true" />
+									</p>
 								</c:when>
 								<c:otherwise>
 									<p style="background-color:lightgrey">비밀 댓글입니다.</p>

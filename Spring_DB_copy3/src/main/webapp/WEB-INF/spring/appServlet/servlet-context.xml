@@ -31,7 +31,10 @@
 		<interceptor>
 			<mapping path="/board/**" />
 			<mapping path="/management/**" />
+			<mapping path="/user/**" />
+			<exclude-mapping path="/ajax/**"/>
 			<beans:ref bean="Interceptor" />
+			
 		</interceptor>
 	</interceptors>
 			
